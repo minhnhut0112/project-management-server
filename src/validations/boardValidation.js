@@ -17,7 +17,8 @@ const createNew = async (req, res, next) => {
       'string.min': 'Description length must be at least 10 characters long',
       'string.max': 'Description length must be less than or equal to 256 characters long',
       'string.trim': 'Description must not have leading or trailing whitespace'
-    })
+    }),
+    type: Joi.string().valid('public', 'private').required()
   })
 
   try {
