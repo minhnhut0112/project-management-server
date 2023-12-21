@@ -23,6 +23,22 @@ const createNew = async (data) => {
   }
 }
 
+const updateCardOrderIds = async (id, data) => {
+  try {
+    const updateData = {
+      ...data,
+      updatedAt: Date.now()
+    }
+
+    const updatedCardOrderIds = await columnModel.updateCardOrderIds(id, updateData)
+
+    return updatedCardOrderIds
+  } catch (error) {
+    throw error
+  }
+}
+
 export const columnService = {
-  createNew
+  createNew,
+  updateCardOrderIds
 }

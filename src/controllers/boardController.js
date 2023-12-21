@@ -21,7 +21,18 @@ const getDetails = async (req, res, next) => {
   }
 }
 
+const updateColumnOrderIds = async (req, res, next) => {
+  try {
+    const updatedColumnOrderIds = await boardService.updateColumnOrderIds(req.params.id, req.body)
+
+    res.status(StatusCodes.OK).json(updatedColumnOrderIds)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const boardController = {
   createNew,
-  getDetails
+  getDetails,
+  updateColumnOrderIds
 }

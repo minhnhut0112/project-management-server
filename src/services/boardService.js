@@ -45,7 +45,23 @@ const getDetails = async (id) => {
   }
 }
 
+const updateColumnOrderIds = async (id, data) => {
+  try {
+    const updateData = {
+      ...data,
+      updatedAt: Date.now()
+    }
+
+    const updatedColumnOrderIds = await boardModel.updateColumnOrderIds(id, updateData)
+
+    return updatedColumnOrderIds
+  } catch (error) {
+    throw error
+  }
+}
+
 export const boardService = {
   createNew,
-  getDetails
+  getDetails,
+  updateColumnOrderIds
 }
