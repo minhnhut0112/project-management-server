@@ -11,6 +11,16 @@ const createNew = async (req, res, next) => {
   }
 }
 
+const getAll = async (req, res, next) => {
+  try {
+    const boards = await boardService.getAll()
+
+    res.status(StatusCodes.OK).json(boards)
+  } catch (error) {
+    next(error)
+  }
+}
+
 const getDetails = async (req, res, next) => {
   try {
     const board = await boardService.getDetails(req.params.id)
@@ -47,5 +57,6 @@ export const boardController = {
   createNew,
   getDetails,
   updateColumnOrderIds,
-  moveCardToDifferentColunmn
+  moveCardToDifferentColunmn,
+  getAll
 }

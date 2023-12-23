@@ -38,6 +38,16 @@ const createNew = async (data) => {
   }
 }
 
+const getAll = async () => {
+  try {
+    const cursor = await GET_DB().collection(BOARD_COLLECTION_NAME).find()
+    const result = await cursor.toArray()
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 const findOneById = async (id) => {
   try {
     return await GET_DB()
@@ -164,5 +174,6 @@ export const boardModel = {
   getDetails,
   pushColumnOrderIds,
   updateColumnOrderIds,
-  pullColumnOrderIds
+  pullColumnOrderIds,
+  getAll
 }

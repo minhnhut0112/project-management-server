@@ -25,6 +25,14 @@ const createNew = async (data) => {
   }
 }
 
+const getAll = async () => {
+  try {
+    return await boardModel.getAll()
+  } catch (error) {
+    throw error
+  }
+}
+
 const getDetails = async (id) => {
   try {
     const board = await boardModel.getDetails(id)
@@ -86,5 +94,6 @@ export const boardService = {
   createNew,
   getDetails,
   updateColumnOrderIds,
-  moveCardToDifferentColunmn
+  moveCardToDifferentColunmn,
+  getAll
 }
