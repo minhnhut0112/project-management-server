@@ -31,8 +31,21 @@ const updateColumnOrderIds = async (req, res, next) => {
   }
 }
 
+const moveCardToDifferentColunmn = async (req, res, next) => {
+  try {
+    // console.log('🚀 ~ file: boardController.js:38 ~ moveCardToDifferentColunmn ~ req.body:', req.body)
+
+    const result = await boardService.moveCardToDifferentColunmn(req.body)
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const boardController = {
   createNew,
   getDetails,
-  updateColumnOrderIds
+  updateColumnOrderIds,
+  moveCardToDifferentColunmn
 }

@@ -37,7 +37,21 @@ const updateCardOrderIds = async (req, res, next) => {
   }
 }
 
+const deleteColumn = async (req, res, next) => {
+  const correctCondition = Joi.object({
+    id: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
+  })
+
+  try {
+    await correctCondition.validateAsync(req.params)
+    next()
+  } catch (error) {
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error.message).message))
+  }
+}
+
 export const columnValodation = {
   createNew,
-  updateCardOrderIds
+  updateCardOrderIds,
+  deleteColumn
 }

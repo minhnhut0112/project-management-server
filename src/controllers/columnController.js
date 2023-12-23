@@ -20,7 +20,18 @@ const updateCardOrderIds = async (req, res, next) => {
   }
 }
 
+const deleteColumn = async (req, res, next) => {
+  try {
+    const result = await columnService.deleteColumn(req.params.id)
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const columnController = {
   createNew,
-  updateCardOrderIds
+  updateCardOrderIds,
+  deleteColumn
 }
