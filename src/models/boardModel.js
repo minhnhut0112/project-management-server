@@ -7,12 +7,11 @@ import { cardModel } from './cardModel'
 
 const BOARD_COLLECTION_NAME = 'boards'
 const BOARD_COLLECTION_SCHEMA = Joi.object({
-  title: Joi.string().required().min(3).max(50).trim().strict(),
-  slug: Joi.string().required().min(3).trim().strict(),
+  title: Joi.string().required().min(3).max(50).trim(),
+  slug: Joi.string().required().min(3).trim(),
   type: Joi.string().valid('public', 'private').required(),
-
-  //   ownerIds: Joi.array().required(),
-  //   memberIds: Joi.array().items(Joi.string()).default([]),
+  // ownerIds: Joi.array().required(),
+  // memberIds: Joi.array().items(Joi.string()).default([]),
   columnOrderIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
 
   createdAt: Joi.date().timestamp('javascript').default(Date.now),
