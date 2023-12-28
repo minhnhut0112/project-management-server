@@ -6,6 +6,8 @@ const Router = express.Router()
 
 Router.route('/').post(cardValodation.createNew, cardController.createNew)
 
-// Router.route('/:id').get(cardController.getDetails).put()
+Router.route('/:id')
+  // .get(cardController.getDetails)
+  .put(cardValodation.updateCard, cardController.updateCard)
 
 export const cardRoute = Router
