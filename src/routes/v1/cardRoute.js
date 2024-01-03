@@ -1,13 +1,19 @@
 import express from 'express'
 import { cardValodation } from '@/validations/cardValidation'
 import { cardController } from '@/controllers/cardController'
+import { upload } from '@/middlewares/fileMiddleware'
 
 const Router = express.Router()
 
 Router.route('/').post(cardValodation.createNew, cardController.createNew)
 
 Router.route('/:id')
-  // .get(cardController.getDetails)
   .put(cardValodation.updateCard, cardController.updateCard)
+  .delete(cardValodation.deleteCard, cardController.deleteCard)
+  .post(upload.single('file'), cardController.updateCover)
+
+Router.route('/removeItem/:id').delete(cardValodation.deleteCard, cardController.removeCover)
+
+Router.route('/:id/upload').post(upload.single('file'), cardController.fileUploads)
 
 export const cardRoute = Router

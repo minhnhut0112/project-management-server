@@ -2,6 +2,10 @@
 
 import { cardModel } from '@/models/cardModel'
 import { columnModel } from '@/models/columnModel'
+import ApiError from '@/utils/ApiError'
+import { allowedImageTypes } from '@/utils/constants'
+import { StatusCodes } from 'http-status-codes'
+import { ObjectId } from 'mongodb'
 
 const createNew = async (data) => {
   try {
@@ -22,28 +26,6 @@ const createNew = async (data) => {
   }
 }
 
-// const getDetails = async (id) => {
-//   try {
-//     const board = await boardModel.getDetails(id)
-//     if (!board) {
-//       throw new ApiError(StatusCodes.NOT_FOUND, 'Board not found!')
-//     }
-
-//     const resBoard = cloneDeep(board)
-
-//     resBoard.columns.forEach((column) => {
-//       // column.cards = resBoard.cards.filter((card) => card.columnId.toString() === column._id.toString())
-//       column.cards = resBoard.cards.filter((card) => card.columnId.equals(column._id))
-//     })
-
-//     delete resBoard.cards
-
-//     return resBoard
-//   } catch (error) {
-//     throw error
-//   }
-// }
-
 const updateCard = async (id, data) => {
   try {
     const updateData = {
@@ -59,8 +41,92 @@ const updateCard = async (id, data) => {
   }
 }
 
+const updateCover = async (id, file) => {
+  try {
+    const cover = {
+      cover: `http://localhost:8017/uploads/${file.filename}`
+    }
+
+    const encodedFilename = encodeURIComponent(file.originalname)
+
+    const updateData = {
+      _id: new ObjectId(),
+      fileName: encodedFilename,
+      type: file.mimetype,
+      path: `http://localhost:8017/uploads/${file.filename}`,
+      createAt: Date.now()
+    }
+
+    const updatedCover = await cardModel.updateCard(id, cover)
+
+    await cardModel.pushAttachment(id, updateData)
+
+    return updatedCover
+  } catch (error) {
+    throw error
+  }
+}
+
+const removeCover = async (id) => {
+  try {
+    const updatedCover = await cardModel.removeCover(id)
+
+    return updatedCover
+  } catch (error) {
+    throw error
+  }
+}
+
+const fileUploads = async (id, data) => {
+  try {
+    const encodedFilename = encodeURIComponent(data.originalname)
+
+    const updateData = {
+      _id: new ObjectId(),
+      fileName: encodedFilename,
+      type: data.mimetype,
+      path: `http://localhost:8017/uploads/${data.filename}`,
+      createAt: Date.now()
+    }
+
+    const card = await cardModel.findOneById(id)
+
+    if (!card.cover && allowedImageTypes.includes(data.mimetype)) {
+      const cover = { cover: `http://localhost:8017/uploads/${data.filename}` }
+      await cardModel.updateCard(id, cover)
+    }
+
+    const updatedCard = await cardModel.pushAttachment(id, updateData)
+
+    return updatedCard
+  } catch (error) {
+    throw error
+  }
+}
+
+const deleteCard = async (id) => {
+  try {
+    const targetCard = await cardModel.findOneById(id)
+
+    if (!targetCard) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'Card not found!')
+    }
+
+    await cardModel.deleteOneById(id)
+
+    await columnModel.pullCardOrderIds(targetCard)
+
+    return { deleteResult: 'Card and its card deleted successfully! ' }
+  } catch (error) {
+    throw error
+  }
+}
+
 export const cardService = {
   createNew,
-  // getDetails
-  updateCard
+  updateCard,
+  deleteCard,
+  fileUploads,
+  updateCover,
+  removeCover
 }

@@ -7,7 +7,7 @@ const createNew = async (req, res, next) => {
   const correctCondition = Joi.object({
     boardId: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
     columnId: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
-    title: Joi.string().required().min(3).max(50).trim()
+    title: Joi.string().required().min(3).max(50).trim().strict()
   })
 
   try {
@@ -24,7 +24,7 @@ const updateCard = async (req, res, next) => {
   const correctCondition = Joi.object({
     boardId: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
     columnId: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
-    title: Joi.string().min(3).max(50).trim()
+    title: Joi.string().min(3).max(50).trim().strict()
   })
 
   try {
@@ -38,7 +38,21 @@ const updateCard = async (req, res, next) => {
   }
 }
 
+const deleteCard = async (req, res, next) => {
+  const correctCondition = Joi.object({
+    id: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
+  })
+
+  try {
+    await correctCondition.validateAsync(req.params)
+    next()
+  } catch (error) {
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error.message).message))
+  }
+}
+
 export const cardValodation = {
   createNew,
-  updateCard
+  updateCard,
+  deleteCard
 }

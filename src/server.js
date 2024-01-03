@@ -7,6 +7,7 @@ import { env } from './config/environment'
 import { APIs_V1 } from './routes/v1'
 import { errorHandlingMiddleware } from './middlewares/errorHandlingMiddleware'
 import { corsOptions } from './config/cors'
+import path from 'path'
 
 const START_SEREVR = () => {
   const app = express()
@@ -14,6 +15,10 @@ const START_SEREVR = () => {
   app.use(cors(corsOptions))
 
   app.use(express.json())
+
+  app.use(express.static(path.join(__dirname, 'public')))
+
+  app.use(express.urlencoded({ extended: true }))
 
   app.use('/v1', APIs_V1)
 

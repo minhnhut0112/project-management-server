@@ -7,9 +7,9 @@ import { cardModel } from './cardModel'
 
 const BOARD_COLLECTION_NAME = 'boards'
 const BOARD_COLLECTION_SCHEMA = Joi.object({
-  title: Joi.string().required().min(3).max(50).trim(),
+  title: Joi.string().required().min(3).max(50).trim().strict(),
   cover: Joi.string().required(),
-  slug: Joi.string().required().min(3).trim(),
+  slug: Joi.string().required().min(3).trim().strict(),
   type: Joi.string().valid('public', 'private').required(),
   // ownerIds: Joi.array().required(),
   // memberIds: Joi.array().items(Joi.string()).default([]),

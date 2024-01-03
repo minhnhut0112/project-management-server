@@ -10,7 +10,7 @@ const CARD_COLLECTION_SCHEMA = Joi.object({
 
   title: Joi.string().required().min(3).max(50).trim().strict(),
   description: Joi.string().optional(),
-
+  attachment: Joi.array().default([]),
   createdAt: Joi.date().timestamp('javascript').default(Date.now),
   updatedAt: Joi.date().timestamp('javascript').default(null),
   _destroy: Joi.boolean().default(false)
@@ -50,7 +50,7 @@ const findOneById = async (id) => {
   }
 }
 
-const updateColumnId = async (id, data) => {
+const updateCard = async (id, data) => {
   try {
     Object.keys(data).forEach((fieldName) => {
       if (INVALID_UPDATE_FIELDS.includes(fieldName)) {
@@ -79,6 +79,46 @@ const updateColumnId = async (id, data) => {
   }
 }
 
+const removeCover = async (id) => {
+  try {
+    const result = await GET_DB()
+      .collection(CARD_COLLECTION_NAME)
+      .findOneAndUpdate(
+        {
+          _id: new ObjectId(id)
+        },
+        {
+          $unset: { cover: '' }
+        },
+        { returnDocument: 'after' }
+      )
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const pushAttachment = async (id, data) => {
+  try {
+    const result = await GET_DB()
+      .collection(CARD_COLLECTION_NAME)
+      .findOneAndUpdate(
+        {
+          _id: new ObjectId(id)
+        },
+        {
+          $push: {
+            attachment: data
+          }
+        },
+        { returnDocument: 'after' }
+      )
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 const deleteManyByColumnId = async (id) => {
   try {
     return await GET_DB()
@@ -91,11 +131,26 @@ const deleteManyByColumnId = async (id) => {
   }
 }
 
+const deleteOneById = async (id) => {
+  try {
+    return await GET_DB()
+      .collection(CARD_COLLECTION_NAME)
+      .deleteOne({
+        _id: new ObjectId(id)
+      })
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 export const cardModel = {
   CARD_COLLECTION_NAME,
   CARD_COLLECTION_SCHEMA,
   createNew,
   findOneById,
-  updateColumnId,
-  deleteManyByColumnId
+  updateCard,
+  deleteManyByColumnId,
+  deleteOneById,
+  pushAttachment,
+  removeCover
 }
