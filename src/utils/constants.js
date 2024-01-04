@@ -8,7 +8,12 @@ export const allowedMimeTypes = [
   'image/webp',
   'image/svg+xml',
   'application/pdf',
-  'text/plain'
+  'text/plain',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'text/csv',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 ]
 
 export const allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/webp']
