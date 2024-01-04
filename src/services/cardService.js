@@ -33,7 +33,7 @@ const updateCard = async (id, data) => {
       updatedAt: Date.now()
     }
 
-    const updatedCard = await cardModel.updateColumnId(id, updateData)
+    const updatedCard = await cardModel.updateCard(id, updateData)
 
     return updatedCard
   } catch (error) {

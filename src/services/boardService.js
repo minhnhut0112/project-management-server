@@ -82,7 +82,7 @@ const moveCardToDifferentColunmn = async (data) => {
       updatedAt: Date.now()
     })
 
-    await cardModel.updateColumnId(data.currentCardId, { columnId: data.nextColumnId })
+    await cardModel.updateCard(data.currentCardId, { columnId: data.nextColumnId })
 
     return { updateResult: 'Successfully' }
   } catch (error) {
