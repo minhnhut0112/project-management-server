@@ -12,7 +12,7 @@ Router.route('/:id')
   .delete(cardValodation.deleteCard, cardController.deleteCard)
   .post(upload.single('file'), cardController.updateCover)
 
-Router.route('/removeItem/:id').delete(cardValodation.deleteCard, cardController.removeCover)
+Router.route('/removeItem/:id').post(cardValodation.deleteCard, cardController.unsetField)
 
 Router.route('/:id/upload').post(upload.single('file'), cardController.fileUploads)
 

@@ -67,11 +67,11 @@ const updateCover = async (id, file) => {
   }
 }
 
-const removeCover = async (id) => {
+const unsetCocver = async (id, field) => {
   try {
-    const updatedCover = await cardModel.removeCover(id)
+    const updatedCard = await cardModel.unsetField(id, field)
 
-    return updatedCover
+    return updatedCard
   } catch (error) {
     throw error
   }
@@ -128,5 +128,5 @@ export const cardService = {
   deleteCard,
   fileUploads,
   updateCover,
-  removeCover
+  unsetCocver
 }

@@ -31,9 +31,9 @@ const updateCover = async (req, res, next) => {
   }
 }
 
-const removeCover = async (req, res, next) => {
+const unsetField = async (req, res, next) => {
   try {
-    const uploaded = await cardService.removeCover(req.params.id)
+    const uploaded = await cardService.unsetCocver(req.params.id, req.body)
 
     res.status(StatusCodes.OK).json(uploaded)
   } catch (error) {
@@ -67,5 +67,5 @@ export const cardController = {
   deleteCard,
   fileUploads,
   updateCover,
-  removeCover
+  unsetField
 }

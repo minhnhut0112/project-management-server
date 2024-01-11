@@ -79,8 +79,9 @@ const updateCard = async (id, data) => {
   }
 }
 
-const removeCover = async (id) => {
+const unsetField = async (id, data) => {
   try {
+    const field = data.field
     const result = await GET_DB()
       .collection(CARD_COLLECTION_NAME)
       .findOneAndUpdate(
@@ -88,7 +89,7 @@ const removeCover = async (id) => {
           _id: new ObjectId(id)
         },
         {
-          $unset: { cover: '' }
+          $unset: { [field]: '' }
         },
         { returnDocument: 'after' }
       )
@@ -152,5 +153,5 @@ export const cardModel = {
   deleteManyByColumnId,
   deleteOneById,
   pushAttachment,
-  removeCover
+  unsetField
 }
