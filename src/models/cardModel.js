@@ -99,7 +99,7 @@ const unsetField = async (id, data) => {
   }
 }
 
-const pushAttachment = async (id, data) => {
+const pushItem = async (id, data) => {
   try {
     const result = await GET_DB()
       .collection(CARD_COLLECTION_NAME)
@@ -108,9 +108,7 @@ const pushAttachment = async (id, data) => {
           _id: new ObjectId(id)
         },
         {
-          $push: {
-            attachment: data
-          }
+          $push: data
         },
         { returnDocument: 'after' }
       )
@@ -152,6 +150,6 @@ export const cardModel = {
   updateCard,
   deleteManyByColumnId,
   deleteOneById,
-  pushAttachment,
+  pushItem,
   unsetField
 }

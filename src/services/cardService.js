@@ -82,11 +82,13 @@ const fileUploads = async (id, data) => {
     const encodedFilename = encodeURIComponent(data.originalname)
 
     const updateData = {
-      _id: new ObjectId(),
-      fileName: encodedFilename,
-      type: data.mimetype,
-      path: `http://localhost:8017/uploads/${data.filename}`,
-      createAt: Date.now()
+      attachment: {
+        _id: new ObjectId(),
+        fileName: encodedFilename,
+        type: data.mimetype,
+        path: `http://localhost:8017/uploads/${data.filename}`,
+        createAt: Date.now()
+      }
     }
 
     const card = await cardModel.findOneById(id)
@@ -96,7 +98,7 @@ const fileUploads = async (id, data) => {
       await cardModel.updateCard(id, cover)
     }
 
-    const updatedCard = await cardModel.pushAttachment(id, updateData)
+    const updatedCard = await cardModel.pushItem(id, updateData)
 
     return updatedCard
   } catch (error) {
