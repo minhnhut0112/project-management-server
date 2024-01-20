@@ -2,15 +2,17 @@ import Joi from 'joi'
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '@/utils/validators'
 import { GET_DB } from '@/config/mongodb'
 import { ObjectId } from 'mongodb'
+import { defaultLabels } from '@/utils/constants'
 
 const CARD_COLLECTION_NAME = 'cards'
 const CARD_COLLECTION_SCHEMA = Joi.object({
   boardId: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
   columnId: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
-
   title: Joi.string().required().min(3).max(50).trim().strict(),
   description: Joi.string().optional(),
   attachment: Joi.array().default([]),
+  label: Joi.array().default(defaultLabels),
+  checklist: Joi.array().default([]),
   createdAt: Joi.date().timestamp('javascript').default(Date.now),
   updatedAt: Joi.date().timestamp('javascript').default(null),
   _destroy: Joi.boolean().default(false)
@@ -79,9 +81,8 @@ const updateCard = async (id, data) => {
   }
 }
 
-const unsetField = async (id, data) => {
+const unsetField = async (id, field) => {
   try {
-    const field = data.field
     const result = await GET_DB()
       .collection(CARD_COLLECTION_NAME)
       .findOneAndUpdate(
@@ -118,6 +119,25 @@ const pushItem = async (id, data) => {
   }
 }
 
+const pullItem = async (id, data) => {
+  try {
+    const result = await GET_DB()
+      .collection(CARD_COLLECTION_NAME)
+      .findOneAndUpdate(
+        {
+          _id: new ObjectId(id)
+        },
+        {
+          $pull: data
+        },
+        { returnDocument: 'after' }
+      )
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 const deleteManyByColumnId = async (id) => {
   try {
     return await GET_DB()
@@ -142,6 +162,58 @@ const deleteOneById = async (id) => {
   }
 }
 
+const findAllLabelsByBoardId = async (boardId) => {
+  try {
+    const cardsWithLabels = await GET_DB()
+      .collection(CARD_COLLECTION_NAME)
+      .find({ boardId: new ObjectId(boardId) })
+      .toArray()
+
+    const uniqueLabels = []
+
+    cardsWithLabels.forEach((card) => {
+      card.label.forEach((label) => {
+        if (label.bgColor !== undefined) {
+          const isLabelUnique = !uniqueLabels.some(
+            (uniqueLabel) => uniqueLabel.labelTitle === label.labelTitle && uniqueLabel.bgColor === label.bgColor
+          )
+
+          if (isLabelUnique) {
+            uniqueLabels.push({
+              labelTitle: label.labelTitle,
+              bgColor: label.bgColor
+            })
+          }
+        }
+      })
+    })
+
+    return uniqueLabels
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const updateCheckList = async (id, data) => {
+  try {
+    const result = await GET_DB()
+      .collection(CARD_COLLECTION_NAME)
+      .findOneAndUpdate(
+        {
+          _id: new ObjectId(id),
+          'checklist._id': new ObjectId(data.checklist._id)
+        },
+        {
+          $set: { 'checklist.$.items': data.checklist.items }
+        },
+        { returnDocument: 'after' }
+      )
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 export const cardModel = {
   CARD_COLLECTION_NAME,
   CARD_COLLECTION_SCHEMA,
@@ -151,5 +223,8 @@ export const cardModel = {
   deleteManyByColumnId,
   deleteOneById,
   pushItem,
-  unsetField
+  unsetField,
+  pullItem,
+  findAllLabelsByBoardId,
+  updateCheckList
 }

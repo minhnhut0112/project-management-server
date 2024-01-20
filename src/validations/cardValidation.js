@@ -22,6 +22,7 @@ const createNew = async (req, res, next) => {
 
 const updateCard = async (req, res, next) => {
   const correctCondition = Joi.object({
+    id: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
     boardId: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
     columnId: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
     title: Joi.string().min(3).max(50).trim().strict(),

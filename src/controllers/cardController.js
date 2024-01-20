@@ -21,36 +21,6 @@ const updateCard = async (req, res, next) => {
   }
 }
 
-const updateCover = async (req, res, next) => {
-  try {
-    const uploaded = await cardService.updateCover(req.params.id, req.file)
-
-    res.status(StatusCodes.OK).json(uploaded)
-  } catch (error) {
-    next(error)
-  }
-}
-
-const unsetField = async (req, res, next) => {
-  try {
-    const uploaded = await cardService.unsetCocver(req.params.id, req.body)
-
-    res.status(StatusCodes.OK).json(uploaded)
-  } catch (error) {
-    next(error)
-  }
-}
-
-const fileUploads = async (req, res, next) => {
-  try {
-    const uploaded = await cardService.fileUploads(req.params.id, req.file)
-
-    res.status(StatusCodes.OK).json(uploaded)
-  } catch (error) {
-    next(error)
-  }
-}
-
 const deleteCard = async (req, res, next) => {
   try {
     const result = await cardService.deleteCard(req.params.id)
@@ -61,11 +31,108 @@ const deleteCard = async (req, res, next) => {
   }
 }
 
+const updateCover = async (req, res, next) => {
+  try {
+    const updatedCover = await cardService.updateCover(req.params.id, req.file)
+
+    res.status(StatusCodes.OK).json(updatedCover)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const removeCover = async (req, res, next) => {
+  try {
+    const result = await cardService.unsetCocver(req.params.id)
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const updateDates = async (req, res, next) => {
+  try {
+    const updatedDates = await cardService.updateDates(req.params.id, req.body)
+
+    res.status(StatusCodes.OK).json(updatedDates)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const removeDates = async (req, res, next) => {
+  try {
+    const result = await cardService.unsetDates(req.params.id)
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const uploadAttachments = async (req, res, next) => {
+  try {
+    const uploadedAttachments = await cardService.uploadAttachments(req.params.id, req.file)
+
+    res.status(StatusCodes.OK).json(uploadedAttachments)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const removeAttachments = async (req, res, next) => {
+  try {
+    const result = await cardService.removeAttachments(req.params.id, req.body)
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const getAllLabelsByBoardId = async (req, res, next) => {
+  try {
+    const labels = await cardService.getAllLabelsByBoardId(req.params.id)
+
+    res.status(StatusCodes.OK).json(labels)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const createChecklist = async (req, res, next) => {
+  try {
+    const checklist = await cardService.createChecklist(req.params.id, req.body)
+
+    res.status(StatusCodes.OK).json(checklist)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const updateCheckList = async (req, res, next) => {
+  try {
+    const updatedChecklist = await cardService.updateCheckList(req.params.id, req.body)
+    console.log('🚀 ~ updateCheckList ~ req.body:', req.body)
+
+    res.status(StatusCodes.OK).json(updatedChecklist)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const cardController = {
   createNew,
   updateCard,
   deleteCard,
-  fileUploads,
   updateCover,
-  unsetField
+  removeAttachments,
+  removeCover,
+  updateDates,
+  removeDates,
+  uploadAttachments,
+  getAllLabelsByBoardId,
+  createChecklist,
+  updateCheckList
 }
