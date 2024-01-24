@@ -4,6 +4,7 @@ import { GET_DB } from '@/config/mongodb'
 import { ObjectId } from 'mongodb'
 import { columnModel } from './columnModel'
 import { cardModel } from './cardModel'
+import { defaultLabels } from '@/utils/constants'
 
 const BOARD_COLLECTION_NAME = 'boards'
 const BOARD_COLLECTION_SCHEMA = Joi.object({
@@ -14,7 +15,7 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
   // ownerIds: Joi.array().required(),
   // memberIds: Joi.array().items(Joi.string()).default([]),
   columnOrderIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
-
+  labels: Joi.array().default(defaultLabels),
   createdAt: Joi.date().timestamp('javascript').default(Date.now),
   updatedAt: Joi.date().timestamp('javascript').default(null),
   _destroy: Joi.boolean().default(false)

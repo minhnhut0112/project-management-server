@@ -2,7 +2,6 @@ import Joi from 'joi'
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '@/utils/validators'
 import { GET_DB } from '@/config/mongodb'
 import { ObjectId } from 'mongodb'
-import { defaultLabels } from '@/utils/constants'
 
 const CARD_COLLECTION_NAME = 'cards'
 const CARD_COLLECTION_SCHEMA = Joi.object({
@@ -11,7 +10,7 @@ const CARD_COLLECTION_SCHEMA = Joi.object({
   title: Joi.string().required().min(3).max(50).trim().strict(),
   description: Joi.string().optional(),
   attachment: Joi.array().default([]),
-  label: Joi.array().default(defaultLabels),
+  labels: Joi.array().default([]),
   checklist: Joi.array().default([]),
   createdAt: Joi.date().timestamp('javascript').default(Date.now),
   updatedAt: Joi.date().timestamp('javascript').default(null),
@@ -204,7 +203,7 @@ const updateCheckList = async (id, data) => {
           'checklist._id': new ObjectId(data.checklist._id)
         },
         {
-          $set: { 'checklist.$.items': data.checklist.items }
+          $set: { 'checklist.$.title': data.checklist.title, 'checklist.$.items': data.checklist.items }
         },
         { returnDocument: 'after' }
       )

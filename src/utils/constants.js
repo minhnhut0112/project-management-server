@@ -1,3 +1,5 @@
+import { ObjectId } from 'mongodb'
+
 export const WHITELIST_DOMAINS = ['http://localhost:5173']
 
 export const allowedMimeTypes = [
@@ -19,9 +21,9 @@ export const allowedMimeTypes = [
 export const allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/webp']
 
 export const defaultLabels = [
-  { bgColor: '#4BCE97', labelTitle: '', checked: false },
-  { bgColor: '#f5cd47', labelTitle: '', checked: false },
-  { bgColor: '#f87168', labelTitle: '', checked: false },
-  { bgColor: '#9f8fef', labelTitle: '', checked: false },
-  { bgColor: '#ea4787', labelTitle: '', checked: false }
+  { _id: new ObjectId(), bgColor: '#4BCE97', labelTitle: '' },
+  { _id: new ObjectId(), bgColor: '#f5cd47', labelTitle: '' },
+  { _id: new ObjectId(), bgColor: '#f87168', labelTitle: '' },
+  { _id: new ObjectId(), bgColor: '#9f8fef', labelTitle: '' },
+  { _id: new ObjectId(), bgColor: '#ea4787', labelTitle: '' }
 ]

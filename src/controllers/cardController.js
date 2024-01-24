@@ -14,7 +14,6 @@ const createNew = async (req, res, next) => {
 const updateCard = async (req, res, next) => {
   try {
     const updatedCard = await cardService.updateCard(req.params.id, req.body)
-
     res.status(StatusCodes.OK).json(updatedCard)
   } catch (error) {
     next(error)
@@ -114,7 +113,6 @@ const createChecklist = async (req, res, next) => {
 const updateCheckList = async (req, res, next) => {
   try {
     const updatedChecklist = await cardService.updateCheckList(req.params.id, req.body)
-    console.log('🚀 ~ updateCheckList ~ req.body:', req.body)
 
     res.status(StatusCodes.OK).json(updatedChecklist)
   } catch (error) {

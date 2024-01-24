@@ -212,7 +212,7 @@ const getAllLabelsByBoardId = async (boardId) => {
 const createChecklist = async (cardId, checklist) => {
   try {
     const datatoUpdate = {
-      checklist: { _id: new ObjectId(), title: checklist.checklistTitle }
+      checklist: { _id: new ObjectId(), title: checklist.checklistTitle, items: [] }
     }
     const newchecklist = await cardModel.pushItem(cardId, datatoUpdate)
     return newchecklist
@@ -222,6 +222,7 @@ const createChecklist = async (cardId, checklist) => {
 }
 
 const updateCheckList = async (cardId, checklist) => {
+  console.log('🚀 ~ updateCheckList ~ cardId, checklist:', cardId, checklist)
   try {
     const updatedCheckList = await cardModel.updateCheckList(cardId, checklist)
     return updatedCheckList
