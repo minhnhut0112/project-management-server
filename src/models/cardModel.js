@@ -161,38 +161,6 @@ const deleteOneById = async (id) => {
   }
 }
 
-const findAllLabelsByBoardId = async (boardId) => {
-  try {
-    const cardsWithLabels = await GET_DB()
-      .collection(CARD_COLLECTION_NAME)
-      .find({ boardId: new ObjectId(boardId) })
-      .toArray()
-
-    const uniqueLabels = []
-
-    cardsWithLabels.forEach((card) => {
-      card.label.forEach((label) => {
-        if (label.bgColor !== undefined) {
-          const isLabelUnique = !uniqueLabels.some(
-            (uniqueLabel) => uniqueLabel.labelTitle === label.labelTitle && uniqueLabel.bgColor === label.bgColor
-          )
-
-          if (isLabelUnique) {
-            uniqueLabels.push({
-              labelTitle: label.labelTitle,
-              bgColor: label.bgColor
-            })
-          }
-        }
-      })
-    })
-
-    return uniqueLabels
-  } catch (error) {
-    throw new Error(error)
-  }
-}
-
 const updateCheckList = async (id, data) => {
   try {
     const result = await GET_DB()
@@ -203,7 +171,33 @@ const updateCheckList = async (id, data) => {
           'checklist._id': new ObjectId(data.checklist._id)
         },
         {
-          $set: { 'checklist.$.title': data.checklist.title, 'checklist.$.items': data.checklist.items }
+          $set: {
+            'checklist.$.title': data.checklist.title,
+            'checklist.$.items': data.checklist.items
+          }
+        },
+        { returnDocument: 'after' }
+      )
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const updateLabel = async (id, data) => {
+  try {
+    const result = await GET_DB()
+      .collection(CARD_COLLECTION_NAME)
+      .findOneAndUpdate(
+        {
+          _id: new ObjectId(id),
+          'labels._id': data.labelEdited._id
+        },
+        {
+          $set: {
+            'labels.$.bgColor': data.labelEdited.bgColor,
+            'labels.$.labelTitle': data.labelEdited.labelTitle
+          }
         },
         { returnDocument: 'after' }
       )
@@ -224,6 +218,6 @@ export const cardModel = {
   pushItem,
   unsetField,
   pullItem,
-  findAllLabelsByBoardId,
-  updateCheckList
+  updateCheckList,
+  updateLabel
 }

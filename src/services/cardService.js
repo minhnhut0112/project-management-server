@@ -160,16 +160,11 @@ const removeAttachments = async (id, data) => {
   try {
     const card = await cardModel.findOneById(id)
 
-    const targetAttachment = card.attachment.find((attachment) => attachment._id == data.attachment._id)
+    const targetAttachment = card.attachment.find(
+      (attachment) => attachment._id == data.attachment._id
+    )
 
     const url = targetAttachment.path
-
-    if (url == card.cover) {
-      const data = {
-        field: 'cover'
-      }
-      await cardModel.unsetField(id, data)
-    }
 
     const uploadDir = './src/public/uploads/'
 
@@ -189,21 +184,13 @@ const removeAttachments = async (id, data) => {
 
     const itemToPull = {
       attachment: {
-        ...targetAttachment
+        _id: new ObjectId(targetAttachment._id)
       }
     }
 
     await cardModel.pullItem(id, itemToPull)
 
     return { result: 'Remove Attachments is successfully!' }
-  } catch (error) {
-    throw error
-  }
-}
-
-const getAllLabelsByBoardId = async (boardId) => {
-  try {
-    return await cardModel.findAllLabelsByBoardId(boardId)
   } catch (error) {
     throw error
   }
@@ -222,7 +209,6 @@ const createChecklist = async (cardId, checklist) => {
 }
 
 const updateCheckList = async (cardId, checklist) => {
-  console.log('🚀 ~ updateCheckList ~ cardId, checklist:', cardId, checklist)
   try {
     const updatedCheckList = await cardModel.updateCheckList(cardId, checklist)
     return updatedCheckList
@@ -241,7 +227,6 @@ export const cardService = {
   removeAttachments,
   updateDates,
   unsetDates,
-  getAllLabelsByBoardId,
   createChecklist,
   updateCheckList
 }

@@ -43,9 +43,41 @@ const updateColumnOrderIds = async (req, res, next) => {
 
 const moveCardToDifferentColunmn = async (req, res, next) => {
   try {
-    // console.log('🚀 ~ file: boardController.js:38 ~ moveCardToDifferentColunmn ~ req.body:', req.body)
-
     const result = await boardService.moveCardToDifferentColunmn(req.body)
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const editLabel = async (req, res, next) => {
+  try {
+    const result = await boardService.editLabel(req.params.id, req.body)
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const createNewLabel = async (req, res, next) => {
+  try {
+    const createdaLabel = await boardService.createNewLabel(req.params.id, req.body)
+
+    res.status(StatusCodes.OK).json(createdaLabel)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const deleteLabel = async (req, res, next) => {
+  try {
+    const result = await boardService.deleteLabel(
+      req.params.id,
+      req.query.labelId,
+      req.query.cardId
+    )
 
     res.status(StatusCodes.OK).json(result)
   } catch (error) {
@@ -58,5 +90,8 @@ export const boardController = {
   getDetails,
   updateColumnOrderIds,
   moveCardToDifferentColunmn,
-  getAll
+  getAll,
+  editLabel,
+  createNewLabel,
+  deleteLabel
 }

@@ -20,12 +20,14 @@ const createNew = async (req, res, next) => {
   }
 }
 
-const updateColumnOrderIds = async (req, res, next) => {
+const updateBoard = async (req, res, next) => {
   const correctCondition = Joi.object({
     title: Joi.string().min(3).max(50).trim().strict(),
     description: Joi.string().min(10).max(256).trim().strict(),
     type: Joi.string().valid('public', 'private'),
-    columnOrderIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
+    columnOrderIds: Joi.array().items(
+      Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
+    )
   })
 
   try {
@@ -42,17 +44,15 @@ const updateColumnOrderIds = async (req, res, next) => {
 const moveCardToDifferentColunmn = async (req, res, next) => {
   const correctCondition = Joi.object({
     currentCardId: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
-
     prevColumnId: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
     prevCardOrderIds: Joi.array()
       .required()
       .items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)),
-
     nextColumnId: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
-    nextCardOrderIds: Joi.array().required().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
+    nextCardOrderIds: Joi.array()
+      .required()
+      .items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
   })
-
-  // console.log('🚀 ~ file: boardValidation.js:57 ~ moveCardToDifferentColunmn ~ req.body:', req.body)
 
   try {
     await correctCondition.validateAsync(req.body, {
@@ -66,6 +66,6 @@ const moveCardToDifferentColunmn = async (req, res, next) => {
 
 export const boardValodation = {
   createNew,
-  updateColumnOrderIds,
+  updateBoard,
   moveCardToDifferentColunmn
 }

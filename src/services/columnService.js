@@ -3,6 +3,7 @@ import { cardModel } from '@/models/cardModel'
 import { columnModel } from '@/models/columnModel'
 import ApiError from '@/utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
+import { ObjectId } from 'mongodb'
 
 const createNew = async (data) => {
   try {
@@ -17,7 +18,11 @@ const createNew = async (data) => {
     if (getNewColumn) {
       getNewColumn.cards = []
 
-      await boardModel.pushColumnOrderIds(getNewColumn)
+      const itemToPush = {
+        columnOrderIds: new ObjectId(getNewColumn._id)
+      }
+
+      await boardModel.pushItem(getNewColumn.boardId, itemToPush)
     }
 
     return getNewColumn
@@ -53,7 +58,11 @@ const deleteColumn = async (id) => {
 
     await cardModel.deleteManyByColumnId(id)
 
-    await boardModel.pullColumnOrderIds(targetColumn)
+    const itemToPull = {
+      columnOrderIds: targetColumn._id
+    }
+
+    await boardModel.pullItem(targetColumn.boardId, itemToPull)
 
     return { deleteResult: 'Column and its card deleted successfully! ' }
   } catch (error) {

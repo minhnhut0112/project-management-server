@@ -23,10 +23,6 @@ Router.route('/:id/attachments')
   .post(upload.single('file'), cardController.uploadAttachments)
   .put(cardValodation.updateCard, cardController.removeAttachments)
 
-Router.route('/:id/labels').get(cardController.getAllLabelsByBoardId)
-// .post(cardController.updateCard, cardController.updateLabel)
-// .put(cardValodation.updateCard, cardController.removeFile)
-
 Router.route('/:id/checklist')
   .post(cardController.createChecklist)
   .put(cardValodation.updateCard, cardController.updateCheckList)

@@ -90,16 +90,6 @@ const removeAttachments = async (req, res, next) => {
   }
 }
 
-const getAllLabelsByBoardId = async (req, res, next) => {
-  try {
-    const labels = await cardService.getAllLabelsByBoardId(req.params.id)
-
-    res.status(StatusCodes.OK).json(labels)
-  } catch (error) {
-    next(error)
-  }
-}
-
 const createChecklist = async (req, res, next) => {
   try {
     const checklist = await cardService.createChecklist(req.params.id, req.body)
@@ -130,7 +120,6 @@ export const cardController = {
   updateDates,
   removeDates,
   uploadAttachments,
-  getAllLabelsByBoardId,
   createChecklist,
   updateCheckList
 }

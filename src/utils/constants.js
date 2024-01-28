@@ -21,9 +21,9 @@ export const allowedMimeTypes = [
 export const allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/webp']
 
 export const defaultLabels = [
-  { _id: new ObjectId(), bgColor: '#4BCE97', labelTitle: '' },
+  { _id: new ObjectId(), bgColor: '#baf3db', labelTitle: '' },
   { _id: new ObjectId(), bgColor: '#f5cd47', labelTitle: '' },
-  { _id: new ObjectId(), bgColor: '#f87168', labelTitle: '' },
-  { _id: new ObjectId(), bgColor: '#9f8fef', labelTitle: '' },
-  { _id: new ObjectId(), bgColor: '#ea4787', labelTitle: '' }
+  { _id: new ObjectId(), bgColor: '#fedec8', labelTitle: '' },
+  { _id: new ObjectId(), bgColor: '#ffd5d2', labelTitle: '' },
+  { _id: new ObjectId(), bgColor: '#dfd8fd', labelTitle: '' }
 ]

@@ -7,6 +7,7 @@ import ApiError from '@/utils/ApiError'
 import { slugify } from '@/utils/formatters'
 import { StatusCodes } from 'http-status-codes'
 import { cloneDeep } from 'lodash'
+import { ObjectId } from 'mongodb'
 
 const createNew = async (data) => {
   try {
@@ -62,7 +63,7 @@ const updateColumnOrderIds = async (id, data) => {
       updatedAt: Date.now()
     }
 
-    const updatedColumnOrderIds = await boardModel.updateColumnOrderIds(id, updateData)
+    const updatedColumnOrderIds = await boardModel.updateBoard(id, updateData)
 
     return updatedColumnOrderIds
   } catch (error) {
@@ -90,10 +91,68 @@ const moveCardToDifferentColunmn = async (data) => {
   }
 }
 
+const editLabel = async (id, data) => {
+  try {
+    const board = await boardModel.updateLabel(id, data)
+
+    const cardId = data.cardId
+
+    await cardModel.updateLabel(cardId, data)
+
+    return board
+  } catch (error) {
+    throw error
+  }
+}
+
+const createNewLabel = async (id, label) => {
+  try {
+    const itemToPush = {
+      labels: {
+        ...label,
+        _id: new ObjectId()
+      }
+    }
+
+    const createdaLabel = await boardModel.pushItem(id, itemToPush)
+
+    return createdaLabel
+  } catch (error) {
+    throw error
+  }
+}
+
+const deleteLabel = async (id, labelId, cardId) => {
+  try {
+    const cardLabelToPull = {
+      labels: {
+        _id: labelId
+      }
+    }
+
+    await cardModel.pullItem(cardId, cardLabelToPull)
+
+    const boardLabelToPull = {
+      labels: {
+        _id: new ObjectId(labelId)
+      }
+    }
+
+    await boardModel.pullItem(id, boardLabelToPull)
+
+    return { result: 'Remove label is successfully!' }
+  } catch (error) {
+    throw error
+  }
+}
+
 export const boardService = {
   createNew,
   getDetails,
   updateColumnOrderIds,
   moveCardToDifferentColunmn,
-  getAll
+  getAll,
+  editLabel,
+  createNewLabel,
+  deleteLabel
 }

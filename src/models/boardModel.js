@@ -14,7 +14,9 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
   type: Joi.string().valid('public', 'private').required(),
   // ownerIds: Joi.array().required(),
   // memberIds: Joi.array().items(Joi.string()).default([]),
-  columnOrderIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
+  columnOrderIds: Joi.array()
+    .items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
+    .default([]),
   labels: Joi.array().default(defaultLabels),
   createdAt: Joi.date().timestamp('javascript').default(Date.now),
   updatedAt: Joi.date().timestamp('javascript').default(null),
@@ -95,18 +97,16 @@ const getDetails = async (id) => {
   }
 }
 
-const pushColumnOrderIds = async (column) => {
+const pushItem = async (id, data) => {
   try {
     const result = await GET_DB()
       .collection(BOARD_COLLECTION_NAME)
       .findOneAndUpdate(
         {
-          _id: new ObjectId(column.boardId)
+          _id: new ObjectId(id)
         },
         {
-          $push: {
-            columnOrderIds: new ObjectId(column._id)
-          }
+          $push: data
         },
         { returnDocument: 'after' }
       )
@@ -116,18 +116,16 @@ const pushColumnOrderIds = async (column) => {
   }
 }
 
-const pullColumnOrderIds = async (column) => {
+const pullItem = async (id, data) => {
   try {
     const result = await GET_DB()
       .collection(BOARD_COLLECTION_NAME)
       .findOneAndUpdate(
         {
-          _id: new ObjectId(column.boardId)
+          _id: new ObjectId(id)
         },
         {
-          $pull: {
-            columnOrderIds: new ObjectId(column._id)
-          }
+          $pull: data
         },
         { returnDocument: 'after' }
       )
@@ -137,7 +135,7 @@ const pullColumnOrderIds = async (column) => {
   }
 }
 
-const updateColumnOrderIds = async (id, data) => {
+const updateBoard = async (id, data) => {
   try {
     Object.keys(data).forEach((fieldName) => {
       if (INVALID_UPDATE_FIELDS.includes(fieldName)) {
@@ -166,14 +164,38 @@ const updateColumnOrderIds = async (id, data) => {
   }
 }
 
+const updateLabel = async (id, data) => {
+  try {
+    const result = await GET_DB()
+      .collection(BOARD_COLLECTION_NAME)
+      .findOneAndUpdate(
+        {
+          _id: new ObjectId(id),
+          'labels._id': new ObjectId(data.labelEdited._id)
+        },
+        {
+          $set: {
+            'labels.$.bgColor': data.labelEdited.bgColor,
+            'labels.$.labelTitle': data.labelEdited.labelTitle
+          }
+        },
+        { returnDocument: 'after' }
+      )
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 export const boardModel = {
   BOARD_COLLECTION_NAME,
   BOARD_COLLECTION_SCHEMA,
   createNew,
   findOneById,
   getDetails,
-  pushColumnOrderIds,
-  updateColumnOrderIds,
-  pullColumnOrderIds,
-  getAll
+  pushItem,
+  updateBoard,
+  pullItem,
+  getAll,
+  updateLabel
 }

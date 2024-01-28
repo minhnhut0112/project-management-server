@@ -4,11 +4,18 @@ import { boardController } from '@/controllers/boardController'
 
 const Router = express.Router()
 
-Router.route('/').get(boardController.getAll).post(boardValodation.createNew, boardController.createNew)
+Router.route('/')
+  .get(boardController.getAll)
+  .post(boardValodation.createNew, boardController.createNew)
 
 Router.route('/:id')
   .get(boardController.getDetails)
-  .put(boardValodation.updateColumnOrderIds, boardController.updateColumnOrderIds)
+  .put(boardValodation.updateBoard, boardController.updateColumnOrderIds)
+
+Router.route('/:id/labels')
+  .put(boardController.editLabel)
+  .post(boardController.createNewLabel)
+  .delete(boardController.deleteLabel)
 
 Router.route('/support/moving_card').put(
   boardValodation.moveCardToDifferentColunmn,
