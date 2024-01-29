@@ -52,7 +52,7 @@ const deleteCard = async (id) => {
     }
 
     const uploadDir = './src/public/uploads/'
-    targetCard.attachment.forEach((attachment) => {
+    targetCard.attachments.forEach((attachment) => {
       const fileName = attachment.path.substring(attachment.path.lastIndexOf('/') + 1)
       const filePath = path.join(uploadDir, fileName)
 
@@ -89,7 +89,7 @@ const updateCover = async (id, file) => {
     const encodedFilename = encodeURIComponent(file.originalname)
 
     const updateData = {
-      attachment: {
+      attachments: {
         _id: new ObjectId(),
         fileName: encodedFilename,
         type: file.mimetype,
@@ -151,7 +151,7 @@ const uploadAttachments = async (id, data) => {
     const encodedFilename = encodeURIComponent(data.originalname)
 
     const updateData = {
-      attachment: {
+      attachments: {
         _id: new ObjectId(),
         fileName: encodedFilename,
         type: data.mimetype,
@@ -179,7 +179,7 @@ const removeAttachments = async (id, data) => {
   try {
     const card = await cardModel.findOneById(id)
 
-    const targetAttachment = card.attachment.find(
+    const targetAttachment = card.attachments.find(
       (attachment) => attachment._id == data.attachment._id
     )
 
@@ -205,7 +205,7 @@ const removeAttachments = async (id, data) => {
     }
 
     const itemToPull = {
-      attachment: {
+      attachments: {
         _id: new ObjectId(targetAttachment._id)
       }
     }
