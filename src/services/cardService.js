@@ -51,6 +51,25 @@ const deleteCard = async (id) => {
       throw new ApiError(StatusCodes.NOT_FOUND, 'Card not found!')
     }
 
+    const uploadDir = './src/public/uploads/'
+    targetCard.attachment.forEach((attachment) => {
+      const fileName = attachment.path.substring(attachment.path.lastIndexOf('/') + 1)
+      const filePath = path.join(uploadDir, fileName)
+
+      if (fs.existsSync(filePath)) {
+        fs.unlink(filePath, (err) => {
+          if (err) {
+            throw new ApiError(
+              StatusCodes.INTERNAL_SERVER_ERROR,
+              'Error deleting file: ' + err.message
+            )
+          }
+        })
+      } else {
+        throw new ApiError(StatusCodes.NOT_FOUND, 'File not found!')
+      }
+    })
+
     await cardModel.deleteOneById(id)
 
     await columnModel.pullCardOrderIds(targetCard)
@@ -175,7 +194,10 @@ const removeAttachments = async (id, data) => {
     if (fs.existsSync(filePath)) {
       fs.unlink(filePath, (err) => {
         if (err) {
-          throw new ApiError()
+          throw new ApiError(
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            'Error deleting file: ' + err.message
+          )
         }
       })
     } else {
