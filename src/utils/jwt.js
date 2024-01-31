@@ -1,16 +1,27 @@
 import { env } from '@/config/environment'
 import jwt from 'jsonwebtoken'
 
-const generateToken = (userId) => {
+const generateAccessToken = (userId) => {
   return jwt.sign(
     {
-      userId
+      id: userId
     },
     env.ACCESS_TOKEN,
-    { expiresIn: '1h' }
+    { expiresIn: '30s' }
+  )
+}
+
+const generateRefreshToken = (userId) => {
+  return jwt.sign(
+    {
+      id: userId
+    },
+    env.ACCESS_TOKEN,
+    { expiresIn: '365d' }
   )
 }
 
 export const jwtUtils = {
-  generateToken
+  generateAccessToken,
+  generateRefreshToken
 }
