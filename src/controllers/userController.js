@@ -2,6 +2,7 @@ import { userService } from '@/services/userService'
 import { jwtUtils } from '@/utils/jwt'
 import { StatusCodes } from 'http-status-codes'
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
 
 const signIn = async (req, res, next) => {
   try {
@@ -12,7 +13,7 @@ const signIn = async (req, res, next) => {
       return res.status(401).json({ message: 'Invalid credentials' })
     }
 
-    const validPassword = password === user.password
+    const validPassword = bcrypt.compareSync(password, user.password)
 
     if (!validPassword) {
       return res.status(404).json('Incorrect password')
@@ -32,6 +33,16 @@ const signIn = async (req, res, next) => {
       const { password, ...others } = user
       res.status(StatusCodes.OK).json({ ...others, accessToken })
     }
+  } catch (error) {
+    next(error)
+  }
+}
+
+const signUp = async (req, res, next) => {
+  try {
+    const { email, password } = req.body
+    const newUser = await userService.signUp(email, password)
+    res.status(StatusCodes.OK).json(newUser)
   } catch (error) {
     next(error)
   }
@@ -63,7 +74,36 @@ const refreshToken = async (req, res, next) => {
   }
 }
 
+const getUser = async (req, res, next) => {
+  try {
+    const userId = req.params.id
+    if (!userId) return res.status(StatusCodes.NOT_FOUND)
+    const user = await userService.getUser(userId)
+    res.status(StatusCodes.OK).json(user)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const findUSer = async (req, res, next) => {
+  try {
+    const { query } = req.query
+
+    if (!query) {
+      return res.status(400).json({ error: 'Query parameter is required' })
+    }
+
+    const results = await userService.findUSer(query)
+    res.json(results)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const userController = {
   signIn,
-  refreshToken
+  refreshToken,
+  getUser,
+  signUp,
+  findUSer
 }

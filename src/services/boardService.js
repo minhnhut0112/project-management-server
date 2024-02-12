@@ -3,6 +3,7 @@
 import { boardModel } from '@/models/boardModel'
 import { cardModel } from '@/models/cardModel'
 import { columnModel } from '@/models/columnModel'
+import { usernModel } from '@/models/userModel'
 import ApiError from '@/utils/ApiError'
 import { slugify } from '@/utils/formatters'
 import { StatusCodes } from 'http-status-codes'
@@ -41,7 +42,15 @@ const getDetails = async (id) => {
       throw new ApiError(StatusCodes.NOT_FOUND, 'Board not found!')
     }
 
+    const memberlist = board.memberIds
+
+    memberlist.push(board.ownerId)
+
+    const members = await usernModel.findMember(memberlist)
+
     const resBoard = cloneDeep(board)
+
+    resBoard.userInBoard = members
 
     resBoard.columns.forEach((column) => {
       // column.cards = resBoard.cards.filter((card) => card.columnId.toString() === column._id.toString())

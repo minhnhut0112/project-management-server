@@ -12,8 +12,8 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
   cover: Joi.string().required(),
   slug: Joi.string().required().min(3).trim().strict(),
   type: Joi.string().valid('public', 'private').required(),
-  // ownerIds: Joi.array().required(),
-  // memberIds: Joi.array().items(Joi.string()).default([]),
+  ownerId: Joi.string().required(),
+  memberIds: Joi.array().items(Joi.string()).default([]),
   columnOrderIds: Joi.array()
     .items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
     .default([]),

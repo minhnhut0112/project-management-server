@@ -63,6 +63,18 @@ const updateCard = async (id, data) => {
       data.columnId = new ObjectId(data.columnId)
     }
 
+    if (data.members && Array.isArray(data.members)) {
+      data.members = data.members.map((member) => {
+        const memberId = member._id
+        return {
+          _id: new ObjectId(memberId),
+          avatar: member.avatar,
+          username: member.username,
+          avatarColor: member.avatarColor
+        }
+      })
+    }
+
     const result = await GET_DB()
       .collection(CARD_COLLECTION_NAME)
       .findOneAndUpdate(

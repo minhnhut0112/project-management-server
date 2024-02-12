@@ -5,9 +5,7 @@ import ApiError from '@/utils/ApiError'
 const signinValidation = async (req, res, next) => {
   const schema = Joi.object({
     email: Joi.string().email().required(),
-    password: Joi.string()
-      .pattern(/^[a-zA-Z0-9]{3,30}$/)
-      .required()
+    password: Joi.string().min(8).required()
   })
 
   try {
@@ -27,11 +25,12 @@ const signinValidation = async (req, res, next) => {
 
 const signupValidation = async (req, res, next) => {
   const schema = Joi.object({
-    username: Joi.string().alphanum().min(3).max(30).required(),
-    password: Joi.string()
-      .min(8)
-      .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)
+    email: Joi.string().email().required(),
+    password: Joi.string().min(8).required(),
+    confirmPassword: Joi.string()
+      .valid(Joi.ref('password'))
       .required()
+      .error(new Error('Passwords do not match'))
   })
 
   try {

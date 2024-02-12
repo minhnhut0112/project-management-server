@@ -26,7 +26,8 @@ const updateCard = async (req, res, next) => {
     boardId: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
     columnId: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
     title: Joi.string().min(3).max(50).trim().strict(),
-    description: Joi.string().min(3).max(256).trim().strict()
+    description: Joi.string().min(3).max(256).trim().strict(),
+    members: Joi.array()
   })
 
   try {
