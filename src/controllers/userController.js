@@ -87,13 +87,13 @@ const getUser = async (req, res, next) => {
 
 const findUSer = async (req, res, next) => {
   try {
-    const { query } = req.query
+    const { username, email } = req.body
 
-    if (!query) {
+    if (!username && !email) {
       return res.status(400).json({ error: 'Query parameter is required' })
     }
 
-    const results = await userService.findUSer(query)
+    const results = await userService.findUSer(username, email)
     res.json(results)
   } catch (error) {
     next(error)

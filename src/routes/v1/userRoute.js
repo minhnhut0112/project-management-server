@@ -4,7 +4,7 @@ import express from 'express'
 
 const Router = express.Router()
 
-Router.route('/').get(userController.findUSer)
+Router.route('/finduser').post(userController.findUSer)
 
 Router.route('/signin').post(userValidation.signinValidation, userController.signIn)
 Router.route('/signup').post(userValidation.signupValidation, userController.signUp)

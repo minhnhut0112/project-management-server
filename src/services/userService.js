@@ -78,9 +78,9 @@ const getUser = async (userId) => {
   }
 }
 
-const findUSer = async (query) => {
+const findUSer = async (username, email) => {
   try {
-    const results = await usernModel.findUser(query)
+    const results = await usernModel.findUser(username, email)
     return results
   } catch (error) {
     throw error
