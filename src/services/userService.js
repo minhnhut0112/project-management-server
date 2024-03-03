@@ -78,10 +78,16 @@ const getUser = async (userId) => {
   }
 }
 
-const findUSer = async (username, email) => {
+const findUSer = async (email) => {
   try {
-    const results = await usernModel.findUser(username, email)
-    return results
+    const users = await usernModel.findUser(email)
+
+    const filteredUsers = users.map((user) => ({
+      avatar: user?.avatar,
+      username: user?.username,
+      avatarColor: user?.avatarColor
+    }))
+    return filteredUsers
   } catch (error) {
     throw error
   }

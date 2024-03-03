@@ -62,19 +62,16 @@ const findOneById = async (id) => {
   }
 }
 
-const findUser = async (username, email) => {
+const findUser = async (email) => {
   try {
-    if (!username && !email) {
+    if (!email) {
       throw new Error('At least one of username or email must be provided')
     }
 
     return await GET_DB()
       .collection(USER_COLLECTION_NAME)
       .find({
-        $or: [
-          username && { username: { $regex: username, $options: 'i' } },
-          email && { email: { $regex: email, $options: 'i' } }
-        ].filter(Boolean)
+        email: { $regex: email, $options: 'i' }
       })
       .toArray()
   } catch (error) {
