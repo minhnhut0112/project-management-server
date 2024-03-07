@@ -27,8 +27,4 @@ Router.route('/:id/checklist')
   .post(cardController.createChecklist)
   .put(cardValodation.updateCard, cardController.updateCheckList)
 
-// Router.route('/:id/comments')
-//   .post(cardController.updateCard, cardController.fileUploads)
-//   .put(cardValodation.updateCard, cardController.removeFile)
-
 export const cardRoute = Router

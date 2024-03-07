@@ -8,9 +8,21 @@ import { APIs_V1 } from './routes/v1'
 import { errorHandlingMiddleware } from './middlewares/errorHandlingMiddleware'
 import { corsOptions } from './config/cors'
 import path from 'path'
+import http from 'http'
+import { Server as SocketIOServer } from 'socket.io'
+import { cardController } from './controllers/cardController'
 
 const START_SEREVR = () => {
   const app = express()
+
+  const server = http.createServer(app)
+  const io = new SocketIOServer(server, {
+    cors: {
+      origin: 'http://localhost:5173',
+      methods: ['GET', 'POST'],
+      credentials: true
+    }
+  })
 
   app.use(cors(corsOptions))
 
@@ -22,10 +34,29 @@ const START_SEREVR = () => {
 
   app.use('/v1', APIs_V1)
 
+  io.on('connection', (socket) => {
+    // console.log('A client connected', socket.id)
+
+    socket.on('card-comment', ({ id, msg }) => {
+      cardController
+        .createComment(id, msg)
+        .then(() => {
+          io.emit('chat-message', msg)
+        })
+        .catch((error) => {
+          console.error('Error saving comment:', error)
+        })
+    })
+
+    socket.on('disconnect', () => {
+      // console.log('User disconnected', socket.id)
+    })
+  })
+
   app.use(errorHandlingMiddleware)
 
-  app.listen(env.APP_PORT, env.APP_HOST, () => {
-    console.log(`Server is running at http://${env.APP_HOST}:${env.APP_PORT}/`)
+  server.listen(env.APP_PORT, env.APP_HOST, () => {
+    console.log(`Server is running at http://${env.APP_HOST}:${env.APP_PORT}`)
   })
 
   exitHook(() => {

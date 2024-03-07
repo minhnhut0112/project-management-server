@@ -57,6 +57,12 @@ const getDetails = async (id) => {
       column.cards = resBoard.cards.filter((card) => card.columnId.equals(column._id))
     })
 
+    resBoard.cards.forEach((card) => {
+      if (card.comments && card.comments.length > 0) {
+        card.comments.reverse()
+      }
+    })
+
     delete resBoard.cards
 
     return resBoard

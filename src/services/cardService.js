@@ -239,6 +239,26 @@ const updateCheckList = async (cardId, checklist) => {
   }
 }
 
+const createComment = async (cardId, message) => {
+  try {
+    const card = await cardModel.findOneById(cardId)
+
+    if (!card) {
+      throw new Error('Card not found')
+    }
+
+    const dataToUpdate = {
+      comments: { _id: new ObjectId(), ...message }
+    }
+
+    const newComment = await cardModel.pushItem(cardId, dataToUpdate)
+
+    return newComment
+  } catch (error) {
+    throw error
+  }
+}
+
 export const cardService = {
   createNew,
   updateCard,
@@ -250,5 +270,6 @@ export const cardService = {
   updateDates,
   unsetDates,
   createChecklist,
-  updateCheckList
+  updateCheckList,
+  createComment
 }

@@ -110,6 +110,16 @@ const updateCheckList = async (req, res, next) => {
   }
 }
 
+const createComment = async (cardId, message) => {
+  try {
+    const cardUpdated = await cardService.createComment(cardId, message)
+
+    return cardUpdated
+  } catch (error) {
+    throw error
+  }
+}
+
 export const cardController = {
   createNew,
   updateCard,
@@ -121,5 +131,6 @@ export const cardController = {
   removeDates,
   uploadAttachments,
   createChecklist,
-  updateCheckList
+  updateCheckList,
+  createComment
 }
