@@ -22,4 +22,6 @@ Router.route('/support/moving_card').put(
   boardController.moveCardToDifferentColunmn
 )
 
+Router.route('/invite').post(boardController.sendInviteEmail)
+
 export const boardRoute = Router

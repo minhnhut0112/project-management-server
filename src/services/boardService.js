@@ -1,5 +1,6 @@
 /* eslint-disable no-useless-catch */
 
+import { env } from '@/config/environment'
 import { boardModel } from '@/models/boardModel'
 import { cardModel } from '@/models/cardModel'
 import { columnModel } from '@/models/columnModel'
@@ -9,6 +10,7 @@ import { slugify } from '@/utils/formatters'
 import { StatusCodes } from 'http-status-codes'
 import { cloneDeep } from 'lodash'
 import { ObjectId } from 'mongodb'
+import nodemailer from 'nodemailer'
 
 const createNew = async (data) => {
   try {
@@ -161,6 +163,37 @@ const deleteLabel = async (id, labelId, cardId) => {
   }
 }
 
+const sendInviteEmail = async (email, fullName, boardName) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: env.EMAIL_USERNAME,
+        pass: env.EMAIL_PASSWORD
+      }
+    })
+
+    await transporter.sendMail({
+      from: `${fullName} "<nmnhut01122002@gmail.com>`,
+      to: email,
+      subject: `${fullName} invited you to a Trello board`,
+      html: `<div> 
+      ${fullName} invited you to their board ${boardName}
+      <br/> 
+      Join them on Trello to collaborate, manage projects, and reach new productivity peaks. 
+      <br/> 
+      <button><a href='youtube.com'>Go to board</a></button>
+      </div>`
+    })
+
+    return 'Send Email Successfully!'
+  } catch (error) {
+    throw error
+  }
+}
+
 export const boardService = {
   createNew,
   getDetails,
@@ -169,5 +202,6 @@ export const boardService = {
   getAll,
   editLabel,
   createNewLabel,
-  deleteLabel
+  deleteLabel,
+  sendInviteEmail
 }
