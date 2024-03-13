@@ -4,6 +4,7 @@ import { env } from '@/config/environment'
 import { boardModel } from '@/models/boardModel'
 import { cardModel } from '@/models/cardModel'
 import { columnModel } from '@/models/columnModel'
+import { inviteModel } from '@/models/inviteModel'
 import { usernModel } from '@/models/userModel'
 import ApiError from '@/utils/ApiError'
 import { slugify } from '@/utils/formatters'
@@ -40,11 +41,12 @@ const getAll = async () => {
 const getDetails = async (id) => {
   try {
     const board = await boardModel.getDetails(id)
+
     if (!board) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'Board not found!')
     }
 
-    const memberlist = board.memberIds
+    const memberlist = board?.members || []
 
     memberlist.push(board.ownerId)
 
@@ -163,8 +165,20 @@ const deleteLabel = async (id, labelId, cardId) => {
   }
 }
 
-const sendInviteEmail = async (email, fullName, boardName) => {
+const sendInviteEmail = async (inviteeEmail, inviterId, boardId) => {
   try {
+    const inviter = await usernModel.findOneById(inviterId)
+
+    const board = await boardModel.findOneById(boardId)
+
+    const dataToCreate = {
+      inviteeEmail,
+      inviterId,
+      boardId
+    }
+
+    const invite = await inviteModel.createNew(dataToCreate)
+
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 587,
@@ -175,20 +189,64 @@ const sendInviteEmail = async (email, fullName, boardName) => {
       }
     })
 
-    await transporter.sendMail({
-      from: `${fullName} "<nmnhut01122002@gmail.com>`,
-      to: email,
-      subject: `${fullName} invited you to a Trello board`,
+    const info = await transporter.sendMail({
+      from: `${inviter.fullname} "<nmnhut01122002@gmail.com>`,
+      to: inviteeEmail,
+      subject: `${inviter.fullname} invited you to a Trello board`,
       html: `<div> 
-      ${fullName} invited you to their board ${boardName}
+      ${inviter.fullname} invited you to their board ${board.title}
       <br/> 
       Join them on Trello to collaborate, manage projects, and reach new productivity peaks. 
       <br/> 
-      <button><a href='youtube.com'>Go to board</a></button>
+      <button><a href='http://localhost:5173/login?inviteId=${invite.insertedId}'>Go to board</a></button>
       </div>`
     })
 
+    if (!info) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'Invite Email sending failed!')
+    }
+
     return 'Send Email Successfully!'
+  } catch (error) {
+    throw error
+  }
+}
+
+const confirmInviteEmail = async (id) => {
+  try {
+    const invite = await inviteModel.findOneById(id)
+
+    if (!invite) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'Invite not found!')
+    }
+
+    const member = await usernModel.findOneByEmail(invite.inviteeEmail)
+
+    const itemToPush = { members: new ObjectId(member._id) }
+
+    await boardModel.pushItem(invite.boardId, itemToPush)
+
+    const dataToUpdate = {
+      status: 'accepted'
+    }
+
+    const inviteUpdated = await inviteModel.updateInvite(id, dataToUpdate)
+
+    return inviteUpdated
+  } catch (error) {
+    throw error
+  }
+}
+
+const getInvite = async (id) => {
+  try {
+    const invite = await inviteModel.findOneById(id)
+
+    if (!invite) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'Invite not found!')
+    }
+
+    return invite
   } catch (error) {
     throw error
   }
@@ -203,5 +261,7 @@ export const boardService = {
   editLabel,
   createNewLabel,
   deleteLabel,
-  sendInviteEmail
+  sendInviteEmail,
+  confirmInviteEmail,
+  getInvite
 }

@@ -81,9 +81,10 @@ const findUser = async (email) => {
 
 const findMember = async (memberIds) => {
   try {
+    const objectIds = memberIds.map((id) => new ObjectId(id))
     return await GET_DB()
       .collection(USER_COLLECTION_NAME)
-      .find({ _id: { $in: memberIds } })
+      .find({ _id: { $in: objectIds } })
       .toArray()
   } catch (error) {
     throw new Error(error)

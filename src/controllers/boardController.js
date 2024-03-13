@@ -87,8 +87,28 @@ const deleteLabel = async (req, res, next) => {
 
 const sendInviteEmail = async (req, res, next) => {
   try {
-    const { email, fullName, boardName } = req.body
-    const result = await boardService.sendInviteEmail(email, fullName, boardName)
+    const { inviteeEmail, inviterId, boardId } = req.body
+    const result = await boardService.sendInviteEmail(inviteeEmail, inviterId, boardId)
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const confirmInviteEmail = async (req, res, next) => {
+  try {
+    const result = await boardService.confirmInviteEmail(req.params.id)
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const getInvite = async (req, res, next) => {
+  try {
+    const result = await boardService.getInvite(req.params.id)
 
     res.status(StatusCodes.OK).json(result)
   } catch (error) {
@@ -105,5 +125,7 @@ export const boardController = {
   editLabel,
   createNewLabel,
   deleteLabel,
-  sendInviteEmail
+  sendInviteEmail,
+  confirmInviteEmail,
+  getInvite
 }

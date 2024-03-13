@@ -24,4 +24,6 @@ Router.route('/support/moving_card').put(
 
 Router.route('/invite').post(boardController.sendInviteEmail)
 
+Router.route('/invite/:id').put(boardController.confirmInviteEmail).get(boardController.getInvite)
+
 export const boardRoute = Router
