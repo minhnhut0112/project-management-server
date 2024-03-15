@@ -6,6 +6,7 @@ const USER_COLLECTION_NAME = 'users'
 const USER_COLLECTION_SCHEMA = Joi.object({
   email: Joi.string().email().required(),
   username: Joi.string().required(),
+  fullName: Joi.string().required(),
   password: Joi.string().min(8).required(),
   avatarColor: Joi.string().required(),
   createdAt: Joi.date().timestamp('javascript').default(Date.now),

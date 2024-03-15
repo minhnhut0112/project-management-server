@@ -40,8 +40,8 @@ const signIn = async (req, res, next) => {
 
 const signUp = async (req, res, next) => {
   try {
-    const { email, password } = req.body
-    const newUser = await userService.signUp(email, password)
+    const { email, password, fullName } = req.body
+    const newUser = await userService.signUp(email, password, fullName)
     res.status(StatusCodes.OK).json(newUser)
   } catch (error) {
     next(error)

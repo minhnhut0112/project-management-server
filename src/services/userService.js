@@ -23,7 +23,7 @@ const authenticateUser = async (email, password) => {
   }
 }
 
-const signUp = async (email, password) => {
+const signUp = async (email, password, fullName) => {
   try {
     const checkEmail = await usernModel.findOneByEmail(email)
 
@@ -51,7 +51,8 @@ const signUp = async (email, password) => {
       email,
       username: username,
       password: hashPassword,
-      avatarColor: avatarColor
+      avatarColor: avatarColor,
+      fullName: fullName
     }
 
     const newUSer = await usernModel.createNew(dataToCreate)

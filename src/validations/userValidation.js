@@ -26,6 +26,7 @@ const signinValidation = async (req, res, next) => {
 const signupValidation = async (req, res, next) => {
   const schema = Joi.object({
     email: Joi.string().email().required(),
+    fullName: Joi.string().required(),
     password: Joi.string().min(8).required(),
     confirmPassword: Joi.string()
       .valid(Joi.ref('password'))

@@ -179,6 +179,17 @@ const sendInviteEmail = async (inviteeEmail, inviterId, boardId) => {
 
     const invite = await inviteModel.createNew(dataToCreate)
 
+    let inviteLink
+
+    const invitee = await usernModel.findOneByEmail(inviteeEmail)
+
+    if (invitee) {
+      // Invitee exists, provide link to sign in
+      inviteLink = `http://localhost:5173/login?inviteId=${invite.insertedId}`
+    } else {
+      inviteLink = `http://localhost:5173/signup?inviteId=${invite.insertedId}`
+    }
+
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 587,
@@ -189,17 +200,19 @@ const sendInviteEmail = async (inviteeEmail, inviterId, boardId) => {
       }
     })
 
+    const htmlContent = `<div style="font-family: Arial, sans-serif; max-width: 600px;">
+      <p>${inviter.fullname} invited you to their board ${board.title}</p>
+      <p>Join them on Trello to collaborate, manage projects, and reach new productivity peaks.</p>
+      <div style="margin-top: 20px;">
+        <a href='${inviteLink}' style="display: inline-block; padding: 10px 20px; background-color: #0052cc; color: #ffffff; text-decoration: none; border-radius: 5px;">Go to board</a>
+      </div>
+    </div>`
+
     const info = await transporter.sendMail({
       from: `${inviter.fullname} "<nmnhut01122002@gmail.com>`,
       to: inviteeEmail,
       subject: `${inviter.fullname} invited you to a Trello board`,
-      html: `<div> 
-      ${inviter.fullname} invited you to their board ${board.title}
-      <br/> 
-      Join them on Trello to collaborate, manage projects, and reach new productivity peaks. 
-      <br/> 
-      <button><a href='http://localhost:5173/login?inviteId=${invite.insertedId}'>Go to board</a></button>
-      </div>`
+      html: htmlContent
     })
 
     if (!info) {
