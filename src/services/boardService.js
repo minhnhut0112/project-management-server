@@ -17,6 +17,7 @@ const createNew = async (data) => {
   try {
     const newBoard = {
       ...data,
+      ownerId: new ObjectId(data.ownerId),
       slug: slugify(data.title)
     }
 
@@ -30,9 +31,9 @@ const createNew = async (data) => {
   }
 }
 
-const getAll = async () => {
+const getAll = async (userId) => {
   try {
-    return await boardModel.getAll()
+    return await boardModel.getAll(userId)
   } catch (error) {
     throw error
   }

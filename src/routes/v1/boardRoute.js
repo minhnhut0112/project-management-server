@@ -4,9 +4,9 @@ import { boardController } from '@/controllers/boardController'
 
 const Router = express.Router()
 
-Router.route('/')
-  .get(boardController.getAll)
-  .post(boardValodation.createNew, boardController.createNew)
+Router.route('/').post(boardValodation.createNew, boardController.createNew)
+
+Router.route('/getAll/:id').get(boardController.getAll)
 
 Router.route('/:id')
   .get(boardController.getDetails)

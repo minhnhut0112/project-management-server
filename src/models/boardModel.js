@@ -12,7 +12,7 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
   cover: Joi.string().required(),
   slug: Joi.string().required().min(3).trim().strict(),
   type: Joi.string().valid('public', 'private').required(),
-  ownerId: Joi.string().required(),
+  ownerId: Joi.required(),
   members: Joi.array().items(Joi.string()).default([]),
   columnOrderIds: Joi.array()
     .items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
@@ -40,9 +40,11 @@ const createNew = async (data) => {
   }
 }
 
-const getAll = async () => {
+const getAll = async (userId) => {
   try {
-    const cursor = await GET_DB().collection(BOARD_COLLECTION_NAME).find()
+    const cursor = await GET_DB()
+      .collection(BOARD_COLLECTION_NAME)
+      .find({ $or: [{ ownerId: new ObjectId(userId) }, { members: new ObjectId(userId) }] })
     const result = await cursor.toArray()
     return result
   } catch (error) {

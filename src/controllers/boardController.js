@@ -13,7 +13,7 @@ const createNew = async (req, res, next) => {
 
 const getAll = async (req, res, next) => {
   try {
-    const boards = await boardService.getAll()
+    const boards = await boardService.getAll(req.params.id)
 
     res.status(StatusCodes.OK).json(boards)
   } catch (error) {
