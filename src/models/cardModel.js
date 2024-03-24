@@ -11,6 +11,7 @@ const CARD_COLLECTION_SCHEMA = Joi.object({
   description: Joi.string().optional(),
   attachments: Joi.array().default([]),
   labels: Joi.array().default([]),
+  completed: Joi.boolean().default(false),
   checklist: Joi.array().default([]),
   createdAt: Joi.date().timestamp('javascript').default(Date.now),
   updatedAt: Joi.date().timestamp('javascript').default(null),
