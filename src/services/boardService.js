@@ -47,9 +47,9 @@ const getDetails = async (id) => {
       throw new ApiError(StatusCodes.NOT_FOUND, 'Board not found!')
     }
 
-    const memberlist = board?.members || []
+    let memberlist = board?.members || []
 
-    memberlist.push(board.ownerId)
+    memberlist = [board.ownerId, ...memberlist]
 
     const members = await usernModel.findMember(memberlist)
 

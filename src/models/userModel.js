@@ -83,10 +83,17 @@ const findUser = async (email) => {
 const findMember = async (memberIds) => {
   try {
     const objectIds = memberIds.map((id) => new ObjectId(id))
-    return await GET_DB()
+    const result = await GET_DB()
       .collection(USER_COLLECTION_NAME)
-      .find({ _id: { $in: objectIds } })
+      .aggregate([
+        { $match: { _id: { $in: objectIds } } },
+        { $addFields: { __order: { $indexOfArray: [objectIds, '$_id'] } } },
+        { $sort: { __order: 1 } },
+        { $project: { __order: 0 } }
+      ])
       .toArray()
+
+    return result
   } catch (error) {
     throw new Error(error)
   }
