@@ -220,6 +220,18 @@ const updateLabel = async (id, data) => {
   }
 }
 
+const findCardByBoardId = async (boardId) => {
+  try {
+    const cards = await GET_DB()
+      .collection(CARD_COLLECTION_NAME)
+      .find({ boardId: new ObjectId(boardId) })
+      .toArray()
+    return cards
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 export const cardModel = {
   CARD_COLLECTION_NAME,
   CARD_COLLECTION_SCHEMA,
@@ -232,5 +244,6 @@ export const cardModel = {
   unsetField,
   pullItem,
   updateCheckList,
-  updateLabel
+  updateLabel,
+  findCardByBoardId
 }

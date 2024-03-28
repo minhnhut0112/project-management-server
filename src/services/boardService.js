@@ -49,7 +49,7 @@ const getDetails = async (id) => {
 
     let memberlist = board?.members || []
 
-    memberlist = [board.ownerId, ...memberlist]
+    memberlist = [board.ownerId, ...memberlist, ...board.assistant]
 
     const members = await usernModel.findMember(memberlist)
 
@@ -166,6 +166,70 @@ const deleteLabel = async (id, labelId, cardId) => {
   }
 }
 
+const changeToAdmin = async (id, idUser) => {
+  try {
+    const itemToPull = {
+      members: new ObjectId(idUser)
+    }
+
+    await boardModel.pullItem(id, itemToPull)
+
+    const itemToPush = {
+      assistant: new ObjectId(idUser)
+    }
+
+    const addAdmin = await boardModel.pushItem(id, itemToPush)
+
+    return addAdmin
+  } catch (error) {
+    throw error
+  }
+}
+
+const changeToMember = async (id, idUser) => {
+  try {
+    const itemToPull = {
+      assistant: new ObjectId(idUser)
+    }
+
+    const removeAdmin = await boardModel.pullItem(id, itemToPull)
+
+    const itemToPush = {
+      members: new ObjectId(idUser)
+    }
+
+    await boardModel.pushItem(id, itemToPush)
+
+    return removeAdmin
+  } catch (error) {
+    throw error
+  }
+}
+
+const removeFromBoard = async (id, idUser) => {
+  try {
+    const itemToPull = {
+      assistant: new ObjectId(idUser),
+      members: new ObjectId(idUser)
+    }
+
+    await boardModel.pullItem(id, itemToPull)
+
+    const cards = await cardModel.findCardByBoardId(id)
+
+    cards.map(async (card) => {
+      const itemToPull = {
+        members: { _id: new ObjectId(idUser) }
+      }
+      await cardModel.pullItem(card?._id, itemToPull)
+    })
+
+    return { result: 'Remove is successfully!' }
+  } catch (error) {
+    throw error
+  }
+}
+
 const sendInviteEmail = async (inviteeEmail, inviterId, boardId) => {
   try {
     const inviter = await usernModel.findOneById(inviterId)
@@ -277,5 +341,8 @@ export const boardService = {
   deleteLabel,
   sendInviteEmail,
   confirmInviteEmail,
-  getInvite
+  getInvite,
+  changeToAdmin,
+  changeToMember,
+  removeFromBoard
 }

@@ -17,6 +17,11 @@ Router.route('/:id/labels')
   .post(boardController.createNewLabel)
   .delete(boardController.deleteLabel)
 
+Router.route('/:id/permission')
+  .put(boardController.changeToAdmin)
+  .post(boardController.changeToMember)
+  .delete(boardController.removeFromBoard)
+
 Router.route('/support/moving_card').put(
   boardValodation.moveCardToDifferentColunmn,
   boardController.moveCardToDifferentColunmn

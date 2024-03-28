@@ -85,6 +85,39 @@ const deleteLabel = async (req, res, next) => {
   }
 }
 
+const changeToAdmin = async (req, res, next) => {
+  try {
+    const { userId } = req.body
+
+    const result = await boardService.changeToAdmin(req.params.id, userId)
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const changeToMember = async (req, res, next) => {
+  try {
+    const { userId } = req.body
+    const result = await boardService.changeToMember(req.params.id, userId)
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const removeFromBoard = async (req, res, next) => {
+  try {
+    const result = await boardService.removeFromBoard(req.params.id, req.query.userId)
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
 const sendInviteEmail = async (req, res, next) => {
   try {
     const { inviteeEmail, inviterId, boardId } = req.body
@@ -127,5 +160,8 @@ export const boardController = {
   deleteLabel,
   sendInviteEmail,
   confirmInviteEmail,
-  getInvite
+  getInvite,
+  changeToAdmin,
+  changeToMember,
+  removeFromBoard
 }
