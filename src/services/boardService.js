@@ -49,7 +49,7 @@ const getDetails = async (id) => {
 
     let memberlist = board?.members || []
 
-    memberlist = [board.ownerId, ...memberlist, ...board.assistant]
+    memberlist = [board.ownerId, ...memberlist, ...board.admins]
 
     const members = await usernModel.findMember(memberlist)
 
@@ -175,7 +175,7 @@ const changeToAdmin = async (id, idUser) => {
     await boardModel.pullItem(id, itemToPull)
 
     const itemToPush = {
-      assistant: new ObjectId(idUser)
+      admins: new ObjectId(idUser)
     }
 
     const addAdmin = await boardModel.pushItem(id, itemToPush)
@@ -189,7 +189,7 @@ const changeToAdmin = async (id, idUser) => {
 const changeToMember = async (id, idUser) => {
   try {
     const itemToPull = {
-      assistant: new ObjectId(idUser)
+      admins: new ObjectId(idUser)
     }
 
     const removeAdmin = await boardModel.pullItem(id, itemToPull)
@@ -209,7 +209,7 @@ const changeToMember = async (id, idUser) => {
 const removeFromBoard = async (id, idUser) => {
   try {
     const itemToPull = {
-      assistant: new ObjectId(idUser),
+      admins: new ObjectId(idUser),
       members: new ObjectId(idUser)
     }
 

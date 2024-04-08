@@ -15,6 +15,8 @@ Router.route('/:id/cover')
   .post(upload.single('file'), cardController.updateCover)
   .delete(cardValodation.updateCard, cardController.removeCover)
 
+Router.route('/:id/comments').post(cardController.createComment)
+
 Router.route('/:id/dates')
   .put(cardValodation.updateCard, cardController.updateDates)
   .delete(cardValodation.updateCard, cardController.removeDates)

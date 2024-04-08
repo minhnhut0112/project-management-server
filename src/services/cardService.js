@@ -22,6 +22,20 @@ const createNew = async (data) => {
       await columnModel.pushCardOrderIds(getNewCard)
     }
 
+    const itemToPush = {
+      activitys: {
+        _id: new ObjectId(),
+        avatar: 'http://localhost:8017/uploads/avt1.jpg',
+        username: 'nhutb2014683',
+        fullname: 'Nhut Sv',
+        avatarColor: '#E7D3BD',
+        description: 'Created this card',
+        timestamp: new Date().valueOf()
+      }
+    }
+
+    await cardModel.pushItem(createdCard.insertedId, itemToPush)
+
     return getNewCard
   } catch (error) {
     throw error
@@ -169,6 +183,20 @@ const uploadAttachments = async (id, data) => {
 
     const updatedCard = await cardModel.pushItem(id, updateData)
 
+    const itemToPush = {
+      activitys: {
+        _id: new ObjectId(),
+        avatar: 'http://localhost:8017/uploads/avt1.jpg',
+        username: 'nhutb2014683',
+        fullname: 'Nhut Sv',
+        avatarColor: '#E7D3BD',
+        description: `attached ${encodedFilename} to this card`,
+        timestamp: new Date().valueOf()
+      }
+    }
+
+    await cardModel.pushItem(id, itemToPush)
+
     return updatedCard
   } catch (error) {
     throw error
@@ -212,6 +240,20 @@ const removeAttachments = async (id, data) => {
 
     await cardModel.pullItem(id, itemToPull)
 
+    const itemToPush = {
+      activitys: {
+        _id: new ObjectId(),
+        avatar: 'http://localhost:8017/uploads/avt1.jpg',
+        username: 'nhutb2014683',
+        fullname: 'Nhut Sv',
+        avatarColor: '#E7D3BD',
+        description: `deleted the  ${targetAttachment.fileName} attachment from this card`,
+        timestamp: new Date().valueOf()
+      }
+    }
+
+    await cardModel.pushItem(id, itemToPush)
+
     return { result: 'Remove Attachments is successfully!' }
   } catch (error) {
     throw error
@@ -224,6 +266,21 @@ const createChecklist = async (cardId, checklist) => {
       checklist: { _id: new ObjectId(), title: checklist.checklistTitle, items: [] }
     }
     const newchecklist = await cardModel.pushItem(cardId, datatoUpdate)
+
+    const itemToPush = {
+      activitys: {
+        _id: new ObjectId(),
+        avatar: 'http://localhost:8017/uploads/avt1.jpg',
+        username: 'nhutb2014683',
+        fullname: 'Nhut Sv',
+        avatarColor: '#E7D3BD',
+        description: `added ${checklist.checklistTitle} to this card`,
+        timestamp: new Date().valueOf()
+      }
+    }
+
+    await cardModel.pushItem(cardId, itemToPush)
+
     return newchecklist
   } catch (error) {
     throw error

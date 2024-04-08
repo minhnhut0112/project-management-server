@@ -10,7 +10,6 @@ import { corsOptions } from './config/cors'
 import path from 'path'
 import http from 'http'
 import { Server as SocketIOServer } from 'socket.io'
-import { cardController } from './controllers/cardController'
 
 const START_SEREVR = () => {
   const app = express()
@@ -24,6 +23,8 @@ const START_SEREVR = () => {
     }
   })
 
+  global.io = io
+
   app.use(cors(corsOptions))
 
   app.use(express.json())
@@ -35,18 +36,7 @@ const START_SEREVR = () => {
   app.use('/v1', APIs_V1)
 
   io.on('connection', (socket) => {
-    // console.log('A client connected', socket.id)
-
-    socket.on('card-comment', ({ id, msg }) => {
-      cardController
-        .createComment(id, msg)
-        .then(() => {
-          io.emit('chat-message', msg)
-        })
-        .catch((error) => {
-          console.error('Error saving comment:', error)
-        })
-    })
+    console.log('A client connected', socket.id)
 
     socket.on('disconnect', () => {
       // console.log('User disconnected', socket.id)

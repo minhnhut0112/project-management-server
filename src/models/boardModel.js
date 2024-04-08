@@ -14,7 +14,7 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
   type: Joi.string().valid('public', 'private').required(),
   ownerId: Joi.required(),
   members: Joi.array().items(Joi.string()).default([]),
-  assistant: Joi.array().required(),
+  admins: Joi.array().default([]),
   columnOrderIds: Joi.array()
     .items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
     .default([]),
@@ -49,7 +49,7 @@ const getAll = async (userId) => {
         $or: [
           { ownerId: new ObjectId(userId) },
           { members: new ObjectId(userId) },
-          { assistant: new ObjectId(userId) }
+          { admins: new ObjectId(userId) }
         ]
       })
     const result = await cursor.toArray()

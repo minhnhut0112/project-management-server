@@ -35,6 +35,8 @@ const updateColumnOrderIds = async (req, res, next) => {
   try {
     const updatedColumnOrderIds = await boardService.updateColumnOrderIds(req.params.id, req.body)
 
+    global.io.emit('updateColumnOrderIds')
+
     res.status(StatusCodes.OK).json(updatedColumnOrderIds)
   } catch (error) {
     next(error)
@@ -44,6 +46,8 @@ const updateColumnOrderIds = async (req, res, next) => {
 const moveCardToDifferentColunmn = async (req, res, next) => {
   try {
     const result = await boardService.moveCardToDifferentColunmn(req.body)
+
+    global.io.emit('moveCardToDifferentColunmn')
 
     res.status(StatusCodes.OK).json(result)
   } catch (error) {
@@ -55,6 +59,8 @@ const editLabel = async (req, res, next) => {
   try {
     const result = await boardService.editLabel(req.params.id, req.body)
 
+    global.io.emit('editLabel')
+
     res.status(StatusCodes.OK).json(result)
   } catch (error) {
     next(error)
@@ -64,6 +70,8 @@ const editLabel = async (req, res, next) => {
 const createNewLabel = async (req, res, next) => {
   try {
     const createdaLabel = await boardService.createNewLabel(req.params.id, req.body)
+
+    global.io.emit('createNewLabel')
 
     res.status(StatusCodes.OK).json(createdaLabel)
   } catch (error) {
@@ -79,6 +87,8 @@ const deleteLabel = async (req, res, next) => {
       req.query.cardId
     )
 
+    global.io.emit('deleteLabel')
+
     res.status(StatusCodes.OK).json(result)
   } catch (error) {
     next(error)
@@ -91,6 +101,8 @@ const changeToAdmin = async (req, res, next) => {
 
     const result = await boardService.changeToAdmin(req.params.id, userId)
 
+    global.io.emit('changeToAdmin')
+
     res.status(StatusCodes.OK).json(result)
   } catch (error) {
     next(error)
@@ -102,6 +114,8 @@ const changeToMember = async (req, res, next) => {
     const { userId } = req.body
     const result = await boardService.changeToMember(req.params.id, userId)
 
+    global.io.emit('changeToMember')
+
     res.status(StatusCodes.OK).json(result)
   } catch (error) {
     next(error)
@@ -111,6 +125,8 @@ const changeToMember = async (req, res, next) => {
 const removeFromBoard = async (req, res, next) => {
   try {
     const result = await boardService.removeFromBoard(req.params.id, req.query.userId)
+
+    global.io.emit('removeFromBoard')
 
     res.status(StatusCodes.OK).json(result)
   } catch (error) {

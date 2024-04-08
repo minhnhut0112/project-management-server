@@ -85,12 +85,7 @@ const findMember = async (memberIds) => {
     const objectIds = memberIds.map((id) => new ObjectId(id))
     const result = await GET_DB()
       .collection(USER_COLLECTION_NAME)
-      .aggregate([
-        { $match: { _id: { $in: objectIds } } },
-        { $addFields: { __order: { $indexOfArray: [objectIds, '$_id'] } } },
-        { $sort: { __order: 1 } },
-        { $project: { __order: 0 } }
-      ])
+      .aggregate([{ $match: { _id: { $in: objectIds } } }])
       .toArray()
 
     return result
