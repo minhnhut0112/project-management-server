@@ -10,6 +10,7 @@ const CARD_COLLECTION_SCHEMA = Joi.object({
   title: Joi.string().required().min(3).max(50).trim().strict(),
   description: Joi.string().optional(),
   attachments: Joi.array().default([]),
+  members: Joi.array().default([]),
   labels: Joi.array().default([]),
   completed: Joi.boolean().default(false),
   checklist: Joi.array().default([]),

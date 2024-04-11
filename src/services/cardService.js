@@ -8,8 +8,9 @@ import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
 import fs from 'fs'
 import path from 'path'
+import { usernModel } from '@/models/userModel'
 
-const createNew = async (data) => {
+const createNew = async (data, userId) => {
   try {
     const newCard = {
       ...data
@@ -22,13 +23,16 @@ const createNew = async (data) => {
       await columnModel.pushCardOrderIds(getNewCard)
     }
 
+    const currentUser = await usernModel.findOneById(userId)
+
     const itemToPush = {
       activitys: {
         _id: new ObjectId(),
-        avatar: 'http://localhost:8017/uploads/avt1.jpg',
-        username: 'nhutb2014683',
-        fullname: 'Nhut Sv',
-        avatarColor: '#E7D3BD',
+        userId: new ObjectId(userId),
+        avatar: currentUser.avatar,
+        username: currentUser.username,
+        fullname: currentUser.fullname,
+        avatarColor: currentUser.avatarColor,
         description: 'Created this card',
         timestamp: new Date().valueOf()
       }
@@ -94,7 +98,7 @@ const deleteCard = async (id) => {
   }
 }
 
-const updateCover = async (id, file) => {
+const updateCover = async (id, file, userId) => {
   try {
     const cover = {
       cover: `http://localhost:8017/uploads/${file.filename}`
@@ -116,16 +120,50 @@ const updateCover = async (id, file) => {
 
     await cardModel.pushItem(id, updateData)
 
+    const currentUser = await usernModel.findOneById(userId)
+
+    const itemToPush = {
+      activitys: {
+        _id: new ObjectId(),
+        userId: new ObjectId(userId),
+        avatar: currentUser.avatar,
+        username: currentUser.username,
+        fullname: currentUser.fullname,
+        avatarColor: currentUser.avatarColor,
+        description: `Set ${file.filename} as the cover to this card`,
+        timestamp: new Date().valueOf()
+      }
+    }
+
+    await cardModel.pushItem(id, itemToPush)
+
     return updatedCover
   } catch (error) {
     throw error
   }
 }
 
-const unsetCocver = async (id) => {
+const unsetCocver = async (id, userId) => {
   try {
     const field = 'cover'
     await cardModel.unsetField(id, field)
+
+    const currentUser = await usernModel.findOneById(userId)
+
+    const itemToPush = {
+      activitys: {
+        _id: new ObjectId(),
+        userId: new ObjectId(userId),
+        avatar: currentUser.avatar,
+        username: currentUser.username,
+        fullname: currentUser.fullname,
+        avatarColor: currentUser.avatarColor,
+        description: 'Delete the card cover',
+        timestamp: new Date().valueOf()
+      }
+    }
+
+    await cardModel.pushItem(id, itemToPush)
 
     return { result: 'Remove Cover is successfully!' }
   } catch (error) {
@@ -133,8 +171,25 @@ const unsetCocver = async (id) => {
   }
 }
 
-const updateDates = async (id, data) => {
+const updateDates = async (id, data, userId) => {
   try {
+    const currentUser = await usernModel.findOneById(userId)
+
+    const itemToPush = {
+      activitys: {
+        _id: new ObjectId(),
+        userId: new ObjectId(userId),
+        avatar: currentUser.avatar,
+        username: currentUser.username,
+        fullname: currentUser.fullname,
+        avatarColor: currentUser.avatarColor,
+        description: 'Updated dates to this card',
+        timestamp: new Date().valueOf()
+      }
+    }
+
+    await cardModel.pushItem(id, itemToPush)
+
     const dataUpdate = {
       dateTime: {
         ...data
@@ -149,10 +204,27 @@ const updateDates = async (id, data) => {
   }
 }
 
-const unsetDates = async (id) => {
+const unsetDates = async (id, userId) => {
   try {
     const field = 'dateTime'
     await cardModel.unsetField(id, field)
+
+    const currentUser = await usernModel.findOneById(userId)
+
+    const itemToPush = {
+      activitys: {
+        _id: new ObjectId(),
+        userId: new ObjectId(userId),
+        avatar: currentUser.avatar,
+        username: currentUser.username,
+        fullname: currentUser.fullname,
+        avatarColor: currentUser.avatarColor,
+        description: 'Deleted dates to this card',
+        timestamp: new Date().valueOf()
+      }
+    }
+
+    await cardModel.pushItem(id, itemToPush)
 
     return { result: 'Remove Dates is successfully!' }
   } catch (error) {
@@ -160,7 +232,7 @@ const unsetDates = async (id) => {
   }
 }
 
-const uploadAttachments = async (id, data) => {
+const uploadAttachments = async (id, data, userId) => {
   try {
     const encodedFilename = encodeURIComponent(data.originalname)
 
@@ -183,14 +255,17 @@ const uploadAttachments = async (id, data) => {
 
     const updatedCard = await cardModel.pushItem(id, updateData)
 
+    const currentUser = await usernModel.findOneById(userId)
+
     const itemToPush = {
       activitys: {
         _id: new ObjectId(),
-        avatar: 'http://localhost:8017/uploads/avt1.jpg',
-        username: 'nhutb2014683',
-        fullname: 'Nhut Sv',
-        avatarColor: '#E7D3BD',
-        description: `attached ${encodedFilename} to this card`,
+        userId: new ObjectId(userId),
+        avatar: currentUser.avatar,
+        username: currentUser.username,
+        fullname: currentUser.fullname,
+        avatarColor: currentUser.avatarColor,
+        description: `Attached ${data.filename} to this card`,
         timestamp: new Date().valueOf()
       }
     }
@@ -203,7 +278,7 @@ const uploadAttachments = async (id, data) => {
   }
 }
 
-const removeAttachments = async (id, data) => {
+const removeAttachments = async (id, data, userId) => {
   try {
     const card = await cardModel.findOneById(id)
 
@@ -240,14 +315,17 @@ const removeAttachments = async (id, data) => {
 
     await cardModel.pullItem(id, itemToPull)
 
+    const currentUser = await usernModel.findOneById(userId)
+
     const itemToPush = {
       activitys: {
         _id: new ObjectId(),
-        avatar: 'http://localhost:8017/uploads/avt1.jpg',
-        username: 'nhutb2014683',
-        fullname: 'Nhut Sv',
-        avatarColor: '#E7D3BD',
-        description: `deleted the  ${targetAttachment.fileName} attachment from this card`,
+        userId: new ObjectId(userId),
+        avatar: currentUser.avatar,
+        username: currentUser.username,
+        fullname: currentUser.fullname,
+        avatarColor: currentUser.avatarColor,
+        description: `deleted the ${targetAttachment.fileName} attachment from this card`,
         timestamp: new Date().valueOf()
       }
     }
@@ -260,21 +338,25 @@ const removeAttachments = async (id, data) => {
   }
 }
 
-const createChecklist = async (cardId, checklist) => {
+const createChecklist = async (cardId, checklist, userId) => {
   try {
     const datatoUpdate = {
       checklist: { _id: new ObjectId(), title: checklist.checklistTitle, items: [] }
     }
     const newchecklist = await cardModel.pushItem(cardId, datatoUpdate)
 
+    const currentUser = await usernModel.findOneById(userId)
+
     const itemToPush = {
       activitys: {
         _id: new ObjectId(),
-        avatar: 'http://localhost:8017/uploads/avt1.jpg',
-        username: 'nhutb2014683',
-        fullname: 'Nhut Sv',
-        avatarColor: '#E7D3BD',
+        userId: new ObjectId(userId),
+        avatar: currentUser.avatar,
+        username: currentUser.username,
+        fullname: currentUser.fullname,
+        avatarColor: currentUser.avatarColor,
         description: `added ${checklist.checklistTitle} to this card`,
+
         timestamp: new Date().valueOf()
       }
     }

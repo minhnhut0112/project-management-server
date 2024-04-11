@@ -2,31 +2,63 @@ import express from 'express'
 import { cardValodation } from '@/validations/cardValidation'
 import { cardController } from '@/controllers/cardController'
 import { upload } from '@/middlewares/fileMiddleware'
+import {
+  verifyTokenAndUserAuthorizationToCard,
+  verifyTokenAndUAdminAuthorizationToCard,
+  verifyToken
+} from '@/middlewares/authorityMiddleware'
 
 const Router = express.Router()
 
-Router.route('/').post(cardValodation.createNew, cardController.createNew)
+Router.route('/').post(verifyToken, cardValodation.createNew, cardController.createNew)
 
 Router.route('/:id')
   .put(cardValodation.updateCard, cardController.updateCard)
-  .delete(cardValodation.deleteCard, cardController.deleteCard)
+  .delete(
+    verifyTokenAndUAdminAuthorizationToCard,
+    cardValodation.deleteCard,
+    cardController.deleteCard
+  )
 
 Router.route('/:id/cover')
-  .post(upload.single('file'), cardController.updateCover)
-  .delete(cardValodation.updateCard, cardController.removeCover)
+  .post(verifyTokenAndUserAuthorizationToCard, upload.single('file'), cardController.updateCover)
+  .delete(
+    verifyTokenAndUserAuthorizationToCard,
+    cardValodation.updateCard,
+    cardController.removeCover
+  )
 
-Router.route('/:id/comments').post(cardController.createComment)
+Router.route('/:id/comments').post(
+  verifyTokenAndUserAuthorizationToCard,
+  cardController.createComment
+)
 
 Router.route('/:id/dates')
-  .put(cardValodation.updateCard, cardController.updateDates)
-  .delete(cardValodation.updateCard, cardController.removeDates)
+  .put(verifyTokenAndUserAuthorizationToCard, cardValodation.updateCard, cardController.updateDates)
+  .delete(
+    verifyTokenAndUserAuthorizationToCard,
+    cardValodation.updateCard,
+    cardController.removeDates
+  )
 
 Router.route('/:id/attachments')
-  .post(upload.single('file'), cardController.uploadAttachments)
-  .put(cardValodation.updateCard, cardController.removeAttachments)
+  .post(
+    verifyTokenAndUserAuthorizationToCard,
+    upload.single('file'),
+    cardController.uploadAttachments
+  )
+  .put(
+    verifyTokenAndUserAuthorizationToCard,
+    cardValodation.updateCard,
+    cardController.removeAttachments
+  )
 
 Router.route('/:id/checklist')
-  .post(cardController.createChecklist)
-  .put(cardValodation.updateCard, cardController.updateCheckList)
+  .post(verifyTokenAndUserAuthorizationToCard, cardController.createChecklist)
+  .put(
+    verifyTokenAndUserAuthorizationToCard,
+    cardValodation.updateCard,
+    cardController.updateCheckList
+  )
 
 export const cardRoute = Router

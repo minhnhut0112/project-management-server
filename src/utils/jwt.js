@@ -7,7 +7,7 @@ const generateAccessToken = (userId) => {
       id: userId
     },
     env.ACCESS_TOKEN,
-    { expiresIn: '30s' }
+    { expiresIn: '365d' }
   )
 }
 

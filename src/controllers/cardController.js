@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes'
 
 const createNew = async (req, res, next) => {
   try {
-    const createdCard = await cardService.createNew(req.body)
+    const createdCard = await cardService.createNew(req.body, req.user)
 
     global.io.emit('createdCard')
 
@@ -15,7 +15,7 @@ const createNew = async (req, res, next) => {
 
 const updateCard = async (req, res, next) => {
   try {
-    const updatedCard = await cardService.updateCard(req.params.id, req.body)
+    const updatedCard = await cardService.updateCard(req.params.id, req.body, req.user)
 
     global.io.emit('updatedCard')
 
@@ -27,7 +27,7 @@ const updateCard = async (req, res, next) => {
 
 const deleteCard = async (req, res, next) => {
   try {
-    const result = await cardService.deleteCard(req.params.id)
+    const result = await cardService.deleteCard(req.params.id, req.user)
 
     global.io.emit('deletedCard')
 
@@ -39,7 +39,7 @@ const deleteCard = async (req, res, next) => {
 
 const updateCover = async (req, res, next) => {
   try {
-    const updatedCover = await cardService.updateCover(req.params.id, req.file)
+    const updatedCover = await cardService.updateCover(req.params.id, req.file, req.user)
 
     global.io.emit('updatedCover')
 
@@ -51,7 +51,7 @@ const updateCover = async (req, res, next) => {
 
 const removeCover = async (req, res, next) => {
   try {
-    const result = await cardService.unsetCocver(req.params.id)
+    const result = await cardService.unsetCocver(req.params.id, req.user)
 
     global.io.emit('deletedCover')
 
@@ -63,7 +63,7 @@ const removeCover = async (req, res, next) => {
 
 const updateDates = async (req, res, next) => {
   try {
-    const updatedDates = await cardService.updateDates(req.params.id, req.body)
+    const updatedDates = await cardService.updateDates(req.params.id, req.body, req.user)
 
     global.io.emit('updateDates')
 
@@ -75,7 +75,7 @@ const updateDates = async (req, res, next) => {
 
 const removeDates = async (req, res, next) => {
   try {
-    const result = await cardService.unsetDates(req.params.id)
+    const result = await cardService.unsetDates(req.params.id, req.user)
 
     global.io.emit('deletedDate')
 
@@ -87,7 +87,11 @@ const removeDates = async (req, res, next) => {
 
 const uploadAttachments = async (req, res, next) => {
   try {
-    const uploadedAttachments = await cardService.uploadAttachments(req.params.id, req.file)
+    const uploadedAttachments = await cardService.uploadAttachments(
+      req.params.id,
+      req.file,
+      req.user
+    )
 
     global.io.emit('uploadedAttachments')
 
@@ -99,7 +103,7 @@ const uploadAttachments = async (req, res, next) => {
 
 const removeAttachments = async (req, res, next) => {
   try {
-    const result = await cardService.removeAttachments(req.params.id, req.body)
+    const result = await cardService.removeAttachments(req.params.id, req.bod, req.usery)
 
     global.io.emit('deletedAttachment')
 
@@ -111,7 +115,7 @@ const removeAttachments = async (req, res, next) => {
 
 const createChecklist = async (req, res, next) => {
   try {
-    const checklist = await cardService.createChecklist(req.params.id, req.body)
+    const checklist = await cardService.createChecklist(req.params.id, req.body, req.user)
 
     global.io.emit('createdChecklist')
 
@@ -123,7 +127,7 @@ const createChecklist = async (req, res, next) => {
 
 const updateCheckList = async (req, res, next) => {
   try {
-    const updatedChecklist = await cardService.updateCheckList(req.params.id, req.body)
+    const updatedChecklist = await cardService.updateCheckList(req.params.id, req.body, req.user)
 
     global.io.emit('updatedCheckList')
 
@@ -135,7 +139,7 @@ const updateCheckList = async (req, res, next) => {
 
 const createComment = async (req, res, next) => {
   try {
-    const commentCreated = await cardService.createComment(req.params.id, req.body)
+    const commentCreated = await cardService.createComment(req.params.id, req.body, req.user)
 
     global.io.emit('createdComment')
 

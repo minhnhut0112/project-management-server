@@ -68,6 +68,12 @@ const getDetails = async (id) => {
       }
     })
 
+    resBoard.cards.forEach((card) => {
+      if (card.activitys && card.activitys.length > 0) {
+        card.activitys.reverse()
+      }
+    })
+
     delete resBoard.cards
 
     return resBoard
