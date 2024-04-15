@@ -209,6 +209,12 @@ const unsetDates = async (id, userId) => {
     const field = 'dateTime'
     await cardModel.unsetField(id, field)
 
+    const dataToUpdate = {
+      completed: false
+    }
+
+    await cardModel.updateCard(id, dataToUpdate)
+
     const currentUser = await usernModel.findOneById(userId)
 
     const itemToPush = {
