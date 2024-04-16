@@ -165,6 +165,18 @@ const getInvite = async (req, res, next) => {
   }
 }
 
+const uploadCover = async (req, res, next) => {
+  try {
+    const uploadedCover = await boardService.uploadCover(req.params.id, req.file)
+
+    global.io.emit('uploadedcover')
+
+    res.status(StatusCodes.OK).json(uploadedCover)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const boardController = {
   createNew,
   getDetails,
@@ -179,5 +191,6 @@ export const boardController = {
   getInvite,
   changeToAdmin,
   changeToMember,
-  removeFromBoard
+  removeFromBoard,
+  uploadCover
 }

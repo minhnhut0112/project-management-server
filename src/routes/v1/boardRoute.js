@@ -1,6 +1,7 @@
 import express from 'express'
 import { boardValodation } from '@/validations/boardValidation'
 import { boardController } from '@/controllers/boardController'
+import { upload } from '@/middlewares/fileMiddleware'
 
 const Router = express.Router()
 
@@ -16,6 +17,8 @@ Router.route('/:id/labels')
   .put(boardController.editLabel)
   .post(boardController.createNewLabel)
   .delete(boardController.deleteLabel)
+
+Router.route('/:id/cover').post(upload.single('file'), boardController.uploadCover)
 
 Router.route('/:id/permission')
   .put(boardController.changeToAdmin)

@@ -121,9 +121,7 @@ const editLabel = async (id, data) => {
   try {
     const board = await boardModel.updateLabel(id, data)
 
-    const cardId = data.cardId
-
-    await cardModel.updateLabel(cardId, data)
+    await cardModel.updateLabel(data)
 
     return board
   } catch (error) {
@@ -148,15 +146,9 @@ const createNewLabel = async (id, label) => {
   }
 }
 
-const deleteLabel = async (id, labelId, cardId) => {
+const deleteLabel = async (id, labelId) => {
   try {
-    const cardLabelToPull = {
-      labels: {
-        _id: labelId
-      }
-    }
-
-    await cardModel.pullItem(cardId, cardLabelToPull)
+    await cardModel.deleteManyLabel(labelId)
 
     const boardLabelToPull = {
       labels: {
@@ -336,6 +328,20 @@ const getInvite = async (id) => {
   }
 }
 
+const uploadCover = async (id, data) => {
+  try {
+    const updateData = {
+      cover: `http://localhost:8017/uploads/${data.filename}`
+    }
+
+    const updatedCard = await boardModel.updateBoard(id, updateData)
+
+    return updatedCard
+  } catch (error) {
+    throw error
+  }
+}
+
 export const boardService = {
   createNew,
   getDetails,
@@ -350,5 +356,6 @@ export const boardService = {
   getInvite,
   changeToAdmin,
   changeToMember,
-  removeFromBoard
+  removeFromBoard,
+  uploadCover
 }
