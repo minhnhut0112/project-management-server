@@ -198,13 +198,12 @@ const updateCheckList = async (id, data) => {
   }
 }
 
-const updateLabel = async (id, data) => {
+const updateLabel = async (data) => {
   try {
     const result = await GET_DB()
       .collection(CARD_COLLECTION_NAME)
-      .findOneAndUpdate(
+      .updateMany(
         {
-          _id: new ObjectId(id),
           'labels._id': data.labelEdited._id
         },
         {
@@ -233,6 +232,21 @@ const findCardByBoardId = async (boardId) => {
   }
 }
 
+const deleteManyLabel = async (id) => {
+  try {
+    return await GET_DB()
+      .collection(CARD_COLLECTION_NAME)
+      .updateMany(
+        {
+          'labels._id': id
+        },
+        { $pull: { labels: { _id: id } } }
+      )
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 export const cardModel = {
   CARD_COLLECTION_NAME,
   CARD_COLLECTION_SCHEMA,
@@ -246,5 +260,6 @@ export const cardModel = {
   pullItem,
   updateCheckList,
   updateLabel,
-  findCardByBoardId
+  findCardByBoardId,
+  deleteManyLabel
 }
