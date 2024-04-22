@@ -342,6 +342,22 @@ const uploadCover = async (id, data) => {
   }
 }
 
+const deleteBoard = async (id) => {
+  try {
+    const targetCard = await cardModel.findOneById(id)
+
+    if (!targetCard) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'Card not found!')
+    }
+
+    await cardModel.deleteOneById(id)
+
+    return { deleteResult: 'Card and its card deleted successfully! ' }
+  } catch (error) {
+    throw error
+  }
+}
+
 export const boardService = {
   createNew,
   getDetails,
@@ -357,5 +373,6 @@ export const boardService = {
   changeToAdmin,
   changeToMember,
   removeFromBoard,
-  uploadCover
+  uploadCover,
+  deleteBoard
 }

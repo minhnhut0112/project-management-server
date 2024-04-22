@@ -12,6 +12,7 @@ Router.route('/getAll/:id').get(boardController.getAll)
 Router.route('/:id')
   .get(boardController.getDetails)
   .put(boardValodation.updateBoard, boardController.updateColumnOrderIds)
+  .delete(boardController.deleteBoard)
 
 Router.route('/:id/labels')
   .put(boardController.editLabel)

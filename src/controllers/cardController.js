@@ -103,7 +103,7 @@ const uploadAttachments = async (req, res, next) => {
 
 const removeAttachments = async (req, res, next) => {
   try {
-    const result = await cardService.removeAttachments(req.params.id, req.bod, req.usery)
+    const result = await cardService.removeAttachments(req.params.id, req.body, req.user)
 
     global.io.emit('deletedAttachment')
 

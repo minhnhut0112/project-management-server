@@ -177,6 +177,18 @@ const uploadCover = async (req, res, next) => {
   }
 }
 
+const deleteBoard = async (req, res, next) => {
+  try {
+    const result = await boardService.deleteBoard(req.params.id, req.user)
+
+    // global.io.emit('deletedCard')
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const boardController = {
   createNew,
   getDetails,
@@ -192,5 +204,6 @@ export const boardController = {
   changeToAdmin,
   changeToMember,
   removeFromBoard,
-  uploadCover
+  uploadCover,
+  deleteBoard
 }

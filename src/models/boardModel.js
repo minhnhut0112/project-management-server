@@ -46,10 +46,15 @@ const getAll = async (userId) => {
     const cursor = await GET_DB()
       .collection(BOARD_COLLECTION_NAME)
       .find({
-        $or: [
-          { ownerId: new ObjectId(userId) },
-          { members: new ObjectId(userId) },
-          { admins: new ObjectId(userId) }
+        $and: [
+          {
+            $or: [
+              { ownerId: new ObjectId(userId) },
+              { members: new ObjectId(userId) },
+              { admins: new ObjectId(userId) }
+            ]
+          },
+          { _destroy: false }
         ]
       })
     const result = await cursor.toArray()
@@ -78,8 +83,7 @@ const getDetails = async (id) => {
       .aggregate([
         {
           $match: {
-            _id: new ObjectId(id),
-            _destroy: false
+            _id: new ObjectId(id)
           }
         },
         {
