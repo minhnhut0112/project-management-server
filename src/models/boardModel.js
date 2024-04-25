@@ -15,6 +15,7 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
   ownerId: Joi.required(),
   members: Joi.array().items(Joi.string()).default([]),
   admins: Joi.array().default([]),
+  issues: Joi.array().default([]),
   columnOrderIds: Joi.array()
     .items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
     .default([]),
@@ -200,6 +201,62 @@ const updateLabel = async (id, data) => {
   }
 }
 
+const updateIssue = async (id, data) => {
+  try {
+    const result = await GET_DB()
+      .collection(BOARD_COLLECTION_NAME)
+      .findOneAndUpdate(
+        {
+          _id: new ObjectId(id),
+          'issues._id': new ObjectId(data.issue._id)
+        },
+        {
+          $push: {
+            'issues.$.comments': { ...data.issue.comment }
+          }
+        },
+        { returnDocument: 'after' }
+      )
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const editIssue = async (id, data) => {
+  try {
+    const updateQuery = {}
+
+    if (data.issue.title) {
+      updateQuery['issues.$.title'] = data.issue.title
+    }
+
+    if (data.issue.opened !== undefined) {
+      updateQuery['issues.$.opened'] = data.issue.opened
+    }
+
+    if (Object.keys(updateQuery).length > 0) {
+      const result = await GET_DB()
+        .collection(BOARD_COLLECTION_NAME)
+        .findOneAndUpdate(
+          {
+            _id: new ObjectId(id),
+            'issues._id': new ObjectId(data.issue._id)
+          },
+          {
+            $set: updateQuery
+          },
+          { returnDocument: 'after' }
+        )
+      return result
+    } else {
+      return null
+    }
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 export const boardModel = {
   BOARD_COLLECTION_NAME,
   BOARD_COLLECTION_SCHEMA,
@@ -210,5 +267,7 @@ export const boardModel = {
   updateBoard,
   pullItem,
   getAll,
-  updateLabel
+  updateLabel,
+  updateIssue,
+  editIssue
 }

@@ -189,6 +189,42 @@ const deleteBoard = async (req, res, next) => {
   }
 }
 
+const createNewIssue = async (req, res, next) => {
+  try {
+    const newIssue = await boardService.createNewIssue(req.params.id, req.body)
+
+    global.io.emit('createNewIssue')
+
+    res.status(StatusCodes.OK).json(newIssue)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const updateIssue = async (req, res, next) => {
+  try {
+    const result = await boardService.updateIssue(req.params.id, req.body)
+
+    global.io.emit('updateIssue')
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const editIssue = async (req, res, next) => {
+  try {
+    const result = await boardService.editIssue(req.params.id, req.body)
+
+    global.io.emit('updateIssue')
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const boardController = {
   createNew,
   getDetails,
@@ -205,5 +241,8 @@ export const boardController = {
   changeToMember,
   removeFromBoard,
   uploadCover,
-  deleteBoard
+  deleteBoard,
+  createNewIssue,
+  updateIssue,
+  editIssue
 }

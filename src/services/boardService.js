@@ -57,6 +57,8 @@ const getDetails = async (id) => {
 
     resBoard.userInBoard = members
 
+    resBoard.issues = resBoard.issues.reverse()
+
     resBoard.columns.forEach((column) => {
       // column.cards = resBoard.cards.filter((card) => card.columnId.toString() === column._id.toString())
       column.cards = resBoard.cards.filter((card) => card.columnId.equals(column._id))
@@ -358,6 +360,43 @@ const deleteBoard = async (id) => {
   }
 }
 
+const createNewIssue = async (id, label) => {
+  try {
+    const itemToPush = {
+      issues: {
+        ...label,
+        _id: new ObjectId()
+      }
+    }
+
+    const createdIssue = await boardModel.pushItem(id, itemToPush)
+
+    return createdIssue
+  } catch (error) {
+    throw error
+  }
+}
+
+const updateIssue = async (id, issue) => {
+  try {
+    const result = await boardModel.updateIssue(id, issue)
+
+    return result
+  } catch (error) {
+    throw error
+  }
+}
+
+const editIssue = async (id, issue) => {
+  try {
+    const result = await boardModel.editIssue(id, issue)
+
+    return result
+  } catch (error) {
+    throw error
+  }
+}
+
 export const boardService = {
   createNew,
   getDetails,
@@ -374,5 +413,8 @@ export const boardService = {
   changeToMember,
   removeFromBoard,
   uploadCover,
-  deleteBoard
+  deleteBoard,
+  createNewIssue,
+  updateIssue,
+  editIssue
 }

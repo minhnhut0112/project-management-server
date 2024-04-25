@@ -31,6 +31,13 @@ Router.route('/support/moving_card').put(
   boardController.moveCardToDifferentColunmn
 )
 
+Router.route('/:id/issues')
+  .post(boardController.createNewIssue)
+  .put(boardController.updateIssue)
+  .patch(boardController.editIssue)
+
+Router.route('/:id/issues').post(boardController.createNewIssue).put(boardController.updateIssue)
+
 Router.route('/invite').post(boardController.sendInviteEmail)
 
 Router.route('/invite/:id').put(boardController.confirmInviteEmail).get(boardController.getInvite)
