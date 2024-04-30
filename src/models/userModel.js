@@ -9,6 +9,7 @@ const USER_COLLECTION_SCHEMA = Joi.object({
   fullName: Joi.string().required(),
   password: Joi.string().min(8).required(),
   avatarColor: Joi.string().required(),
+  starredIds: Joi.array().default([]),
   createdAt: Joi.date().timestamp('javascript').default(Date.now),
   updatedAt: Joi.date().timestamp('javascript').default(null),
   _destroy: Joi.boolean().default(false)
@@ -94,6 +95,44 @@ const findMember = async (memberIds) => {
   }
 }
 
+const pushItem = async (id, data) => {
+  try {
+    const result = await GET_DB()
+      .collection(USER_COLLECTION_NAME)
+      .findOneAndUpdate(
+        {
+          _id: new ObjectId(id)
+        },
+        {
+          $push: data
+        },
+        { returnDocument: 'after' }
+      )
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const pullItem = async (id, data) => {
+  try {
+    const result = await GET_DB()
+      .collection(USER_COLLECTION_NAME)
+      .findOneAndUpdate(
+        {
+          _id: new ObjectId(id)
+        },
+        {
+          $pull: data
+        },
+        { returnDocument: 'after' }
+      )
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 export const usernModel = {
   USER_COLLECTION_NAME,
   USER_COLLECTION_SCHEMA,
@@ -102,5 +141,7 @@ export const usernModel = {
   findOneById,
   findOneByUsername,
   findUser,
-  findMember
+  findMember,
+  pushItem,
+  pullItem
 }

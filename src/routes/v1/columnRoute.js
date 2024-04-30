@@ -10,4 +10,6 @@ Router.route('/:id')
   .put(columnValodation.updateCardOrderIds, columnController.updateCardOrderIds)
   .delete(columnValodation.deleteColumn, columnController.deleteColumn)
 
+Router.route('/archive/:id').put(columnController.archiveAllCard)
+
 export const columnRoute = Router

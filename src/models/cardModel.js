@@ -247,6 +247,27 @@ const deleteManyLabel = async (id) => {
   }
 }
 
+const archiveAllCard = async (id) => {
+  try {
+    const result = await GET_DB()
+      .collection(CARD_COLLECTION_NAME)
+      .updateMany(
+        {
+          columnId: new ObjectId(id)
+        },
+        {
+          $set: {
+            _destroy: true
+          }
+        },
+        { returnDocument: 'after' }
+      )
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 export const cardModel = {
   CARD_COLLECTION_NAME,
   CARD_COLLECTION_SCHEMA,
@@ -261,5 +282,6 @@ export const cardModel = {
   updateCheckList,
   updateLabel,
   findCardByBoardId,
-  deleteManyLabel
+  deleteManyLabel,
+  archiveAllCard
 }

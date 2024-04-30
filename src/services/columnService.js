@@ -70,8 +70,19 @@ const deleteColumn = async (id) => {
   }
 }
 
+const archiveAllCard = async (id) => {
+  try {
+    const archivedAllCard = await cardModel.archiveAllCard(id)
+
+    return archivedAllCard
+  } catch (error) {
+    throw error
+  }
+}
+
 export const columnService = {
   createNew,
   updateCardOrderIds,
-  deleteColumn
+  deleteColumn,
+  archiveAllCard
 }

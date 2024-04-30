@@ -11,7 +11,6 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
   title: Joi.string().required().min(3).max(50).trim().strict(),
   cover: Joi.string().required(),
   slug: Joi.string().required().min(3).trim().strict(),
-  type: Joi.string().valid('public', 'private').required(),
   ownerId: Joi.required(),
   members: Joi.array().items(Joi.string()).default([]),
   admins: Joi.array().default([]),
@@ -65,6 +64,24 @@ const getAll = async (userId) => {
   }
 }
 
+const getBoardByBoardIds = async (boardIds) => {
+  try {
+    const objectIds = boardIds.map((id) => new ObjectId(id)).reverse()
+    const result = await GET_DB()
+      .collection(BOARD_COLLECTION_NAME)
+      .aggregate([
+        { $match: { _id: { $in: objectIds } } },
+        { $addFields: { __order: { $indexOfArray: [objectIds, '$_id'] } } },
+        { $sort: { __order: 1 } }
+      ])
+      .toArray()
+
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 const findOneById = async (id) => {
   try {
     return await GET_DB()
@@ -90,16 +107,32 @@ const getDetails = async (id) => {
         {
           $lookup: {
             from: columnModel.COLUMN_COLLECTION_NAME,
-            localField: '_id',
-            foreignField: 'boardId',
+            let: { boardId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [{ $eq: ['$boardId', '$$boardId'] }, { $eq: ['$_destroy', false] }]
+                  }
+                }
+              }
+            ],
             as: 'columns'
           }
         },
         {
           $lookup: {
             from: cardModel.CARD_COLLECTION_NAME,
-            localField: '_id',
-            foreignField: 'boardId',
+            let: { boardId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [{ $eq: ['$boardId', '$$boardId'] }, { $eq: ['$_destroy', false] }]
+                  }
+                }
+              }
+            ],
             as: 'cards'
           }
         }
@@ -269,5 +302,6 @@ export const boardModel = {
   getAll,
   updateLabel,
   updateIssue,
-  editIssue
+  editIssue,
+  getBoardByBoardIds
 }

@@ -100,10 +100,65 @@ const findUSer = async (req, res, next) => {
   }
 }
 
+const updateStarredBoard = async (req, res, next) => {
+  try {
+    const result = await userService.updateStarredBoard(req.params.id, req.body)
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const removeStarredBoard = async (req, res, next) => {
+  try {
+    const result = await userService.removeStarredBoard(req.params.id, req.body)
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const getStarredBoard = async (req, res, next) => {
+  try {
+    const result = await userService.getStarredBoard(req.params.id)
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const updateRecentBoard = async (req, res, next) => {
+  try {
+    const result = await userService.updateRecentBoard(req.params.id, req.body)
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const getRecentBoard = async (req, res, next) => {
+  try {
+    const result = await userService.getRecentBoard(req.params.id)
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const userController = {
   signIn,
   refreshToken,
   getUser,
   signUp,
-  findUSer
+  findUSer,
+  updateStarredBoard,
+  removeStarredBoard,
+  getStarredBoard,
+  updateRecentBoard,
+  getRecentBoard
 }

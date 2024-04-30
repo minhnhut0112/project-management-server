@@ -8,6 +8,8 @@ import {
   generateUniqueUsername,
   generateUsernameFromEmail
 } from '@/utils/formatters'
+import { ObjectId } from 'mongodb'
+import { boardModel } from '@/models/boardModel'
 
 const authenticateUser = async (email, password) => {
   try {
@@ -94,9 +96,89 @@ const findUSer = async (email) => {
   }
 }
 
+const updateStarredBoard = async (id, boardId) => {
+  try {
+    const itemToPush = {
+      starredIds: new ObjectId(boardId.boardId)
+    }
+    const result = await usernModel.pushItem(id, itemToPush)
+
+    return result
+  } catch (error) {
+    throw error
+  }
+}
+
+const removeStarredBoard = async (id, boardId) => {
+  try {
+    const itemToPull = {
+      starredIds: new ObjectId(boardId.boardId)
+    }
+    const result = await usernModel.pullItem(id, itemToPull)
+
+    return result
+  } catch (error) {
+    throw error
+  }
+}
+
+const getStarredBoard = async (id) => {
+  try {
+    const user = await usernModel.findOneById(id)
+
+    if (!user) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'User not found!')
+    }
+
+    const boardIds = user?.starredIds
+
+    const starredBoard = await boardModel.getBoardByBoardIds(boardIds)
+
+    return starredBoard
+  } catch (error) {
+    throw error
+  }
+}
+
+const updateRecentBoard = async (id, boardId) => {
+  try {
+    const itemToPush = {
+      recentIds: new ObjectId(boardId.boardId)
+    }
+    const result = await usernModel.pushItem(id, itemToPush)
+
+    return result
+  } catch (error) {
+    throw error
+  }
+}
+
+const getRecentBoard = async (id) => {
+  try {
+    const user = await usernModel.findOneById(id)
+
+    if (!user) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'User not found!')
+    }
+
+    const boardIds = user?.recentIds
+
+    const starredBoard = await boardModel.getBoardByBoardIds(boardIds)
+
+    return starredBoard
+  } catch (error) {
+    throw error
+  }
+}
+
 export const userService = {
   authenticateUser,
   getUser,
   signUp,
-  findUSer
+  findUSer,
+  updateStarredBoard,
+  removeStarredBoard,
+  getStarredBoard,
+  updateRecentBoard,
+  getRecentBoard
 }

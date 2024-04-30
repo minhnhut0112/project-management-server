@@ -37,8 +37,21 @@ const deleteColumn = async (req, res, next) => {
   }
 }
 
+const archiveAllCard = async (req, res, next) => {
+  try {
+    const result = await columnService.archiveAllCard(req.params.id)
+
+    global.io.emit('archiveAllCard')
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const columnController = {
   createNew,
   updateCardOrderIds,
-  deleteColumn
+  deleteColumn,
+  archiveAllCard
 }
