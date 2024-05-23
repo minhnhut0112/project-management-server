@@ -1,8 +1,11 @@
 import { userController } from '@/controllers/userController'
+import { upload } from '@/middlewares/fileMiddleware'
 import { userValidation } from '@/validations/userValidation'
 import express from 'express'
 
 const Router = express.Router()
+
+Router.route('/').get(userController.getAllUser)
 
 Router.route('/finduser').post(userController.findUSer)
 
@@ -20,6 +23,9 @@ Router.route('/signup').post(userValidation.signupValidation, userController.sig
 Router.route('/refreshtoken').post(userController.refreshToken)
 Router.route('/signout').post()
 
-Router.route('/:id').get(userController.getUser)
+Router.route('/:id')
+  .get(userController.getUser)
+  .put(userController.updateUser)
+  .post(upload.single('file'), userController.updateAvatar)
 
 export const userRoute = Router

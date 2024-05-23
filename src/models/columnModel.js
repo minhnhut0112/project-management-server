@@ -50,6 +50,25 @@ const findOneById = async (id) => {
   }
 }
 
+const getDestroyedColumnsInBoard = async (boardId) => {
+  try {
+    const destroyedColumns = await GET_DB()
+      .collection(COLUMN_COLLECTION_NAME)
+      .aggregate([
+        {
+          $match: {
+            boardId: new ObjectId(boardId),
+            _destroy: true
+          }
+        }
+      ])
+      .toArray()
+    return destroyedColumns
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 const pushCardOrderIds = async (card) => {
   try {
     const result = await GET_DB()
@@ -141,5 +160,6 @@ export const columnModel = {
   pushCardOrderIds,
   updateCardOrderIds,
   deleteOneById,
-  pullCardOrderIds
+  pullCardOrderIds,
+  getDestroyedColumnsInBoard
 }

@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
 
-export const WHITELIST_DOMAINS = ['http://localhost:5173']
+export const WHITELIST_DOMAINS = ['http://localhost:5173', 'http://localhost:2003']
 
 export const allowedMimeTypes = [
   'image/jpeg',

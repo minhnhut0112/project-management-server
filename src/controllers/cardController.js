@@ -13,6 +13,16 @@ const createNew = async (req, res, next) => {
   }
 }
 
+const getAllNotifications = async (req, res, next) => {
+  try {
+    const cards = await cardService.getAllNotifications(req.params.id)
+
+    res.status(StatusCodes.OK).json(cards)
+  } catch (error) {
+    next(error)
+  }
+}
+
 const updateCard = async (req, res, next) => {
   try {
     const updatedCard = await cardService.updateCard(req.params.id, req.body, req.user)
@@ -161,5 +171,6 @@ export const cardController = {
   uploadAttachments,
   createChecklist,
   updateCheckList,
-  createComment
+  createComment,
+  getAllNotifications
 }

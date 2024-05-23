@@ -15,9 +15,11 @@ import nodemailer from 'nodemailer'
 
 const createNew = async (data) => {
   try {
+    const id = new ObjectId(data.ownerId)
     const newBoard = {
       ...data,
       ownerId: new ObjectId(data.ownerId),
+      admins: [id],
       slug: slugify(data.title)
     }
 
@@ -34,6 +36,14 @@ const createNew = async (data) => {
 const getAll = async (userId) => {
   try {
     return await boardModel.getAll(userId)
+  } catch (error) {
+    throw error
+  }
+}
+
+const getAllClose = async (userId) => {
+  try {
+    return await boardModel.getAllClose(userId)
   } catch (error) {
     throw error
   }
@@ -79,6 +89,18 @@ const getDetails = async (id) => {
     delete resBoard.cards
 
     return resBoard
+  } catch (error) {
+    throw error
+  }
+}
+
+const getArchiveCardAndList = async (id) => {
+  try {
+    const cards = await cardModel.getDestroyedCardsInBoard(id)
+
+    const lists = await columnModel.getDestroyedColumnsInBoard(id)
+
+    return { cards, lists }
   } catch (error) {
     throw error
   }
@@ -346,15 +368,9 @@ const uploadCover = async (id, data) => {
 
 const deleteBoard = async (id) => {
   try {
-    const targetCard = await cardModel.findOneById(id)
+    await boardModel.deleteOneById(id)
 
-    if (!targetCard) {
-      throw new ApiError(StatusCodes.NOT_FOUND, 'Card not found!')
-    }
-
-    await cardModel.deleteOneById(id)
-
-    return { deleteResult: 'Card and its card deleted successfully! ' }
+    return { deleteResult: 'Board and its card deleted successfully! ' }
   } catch (error) {
     throw error
   }
@@ -416,5 +432,7 @@ export const boardService = {
   deleteBoard,
   createNewIssue,
   updateIssue,
-  editIssue
+  editIssue,
+  getArchiveCardAndList,
+  getAllClose
 }

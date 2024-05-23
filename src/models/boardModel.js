@@ -13,7 +13,7 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
   slug: Joi.string().required().min(3).trim().strict(),
   ownerId: Joi.required(),
   members: Joi.array().items(Joi.string()).default([]),
-  admins: Joi.array().default([]),
+  admins: Joi.array(),
   issues: Joi.array().default([]),
   columnOrderIds: Joi.array()
     .items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
@@ -64,13 +64,38 @@ const getAll = async (userId) => {
   }
 }
 
+const getAllClose = async (userId) => {
+  try {
+    const cursor = await GET_DB()
+      .collection(BOARD_COLLECTION_NAME)
+      .find({
+        $and: [
+          {
+            $or: [{ ownerId: new ObjectId(userId) }, { admins: new ObjectId(userId) }]
+          },
+          { _destroy: true }
+        ]
+      })
+    const result = await cursor.toArray()
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 const getBoardByBoardIds = async (boardIds) => {
   try {
-    const objectIds = boardIds.map((id) => new ObjectId(id)).reverse()
+    const objectIds = boardIds?.map((id) => new ObjectId(id)).reverse()
+    if (!objectIds) return
     const result = await GET_DB()
       .collection(BOARD_COLLECTION_NAME)
       .aggregate([
-        { $match: { _id: { $in: objectIds } } },
+        {
+          $match: {
+            _id: { $in: objectIds },
+            _destroy: false
+          }
+        },
         { $addFields: { __order: { $indexOfArray: [objectIds, '$_id'] } } },
         { $sort: { __order: 1 } }
       ])
@@ -177,6 +202,18 @@ const pullItem = async (id, data) => {
         { returnDocument: 'after' }
       )
     return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const deleteOneById = async (id) => {
+  try {
+    return await GET_DB()
+      .collection(BOARD_COLLECTION_NAME)
+      .deleteOne({
+        _id: new ObjectId(id)
+      })
   } catch (error) {
     throw new Error(error)
   }
@@ -303,5 +340,7 @@ export const boardModel = {
   updateLabel,
   updateIssue,
   editIssue,
-  getBoardByBoardIds
+  getBoardByBoardIds,
+  getAllClose,
+  deleteOneById
 }

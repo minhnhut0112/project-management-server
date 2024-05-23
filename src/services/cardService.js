@@ -185,6 +185,17 @@ const updateDates = async (id, data, userId) => {
         avatarColor: currentUser.avatarColor,
         description: 'Updated dates to this card',
         timestamp: new Date().valueOf()
+      },
+
+      notifications: {
+        _id: new ObjectId(),
+        userId: new ObjectId(userId),
+        avatar: currentUser.avatar,
+        username: currentUser.username,
+        fullname: currentUser.fullname,
+        action: 'Added a due date in this card',
+        is_read: false,
+        timestamp: new Date().valueOf()
       }
     }
 
@@ -219,13 +230,20 @@ const unsetDates = async (id, userId) => {
 
     const itemToPush = {
       activitys: {
-        _id: new ObjectId(),
-        userId: new ObjectId(userId),
         avatar: currentUser.avatar,
         username: currentUser.username,
         fullname: currentUser.fullname,
         avatarColor: currentUser.avatarColor,
         description: 'Deleted dates to this card',
+        timestamp: new Date().valueOf()
+      },
+
+      notifications: {
+        avatar: currentUser.avatar,
+        username: currentUser.username,
+        fullname: currentUser.fullname,
+        action: 'Removed due in this card',
+        is_read: false,
         timestamp: new Date().valueOf()
       }
     }
@@ -271,7 +289,16 @@ const uploadAttachments = async (id, data, userId) => {
         username: currentUser.username,
         fullname: currentUser.fullname,
         avatarColor: currentUser.avatarColor,
-        description: `Attached ${data.filename} to this card`,
+        description: `Attached ${encodedFilename} to this card`,
+        timestamp: new Date().valueOf()
+      },
+
+      notifications: {
+        avatar: currentUser.avatar,
+        username: currentUser.username,
+        fullname: currentUser.fullname,
+        action: `Attached ${encodedFilename} to this card`,
+        is_read: false,
         timestamp: new Date().valueOf()
       }
     }
@@ -362,7 +389,6 @@ const createChecklist = async (cardId, checklist, userId) => {
         fullname: currentUser.fullname,
         avatarColor: currentUser.avatarColor,
         description: `added ${checklist.checklistTitle} to this card`,
-
         timestamp: new Date().valueOf()
       }
     }
@@ -398,7 +424,35 @@ const createComment = async (cardId, message) => {
 
     const newComment = await cardModel.pushItem(cardId, dataToUpdate)
 
+    const itemToPush = {
+      notifications: {
+        avatar: message.avatar,
+        username: message.username,
+        fullname: message.fullname,
+        action: message.content,
+        is_read: false,
+        timestamp: new Date().valueOf()
+      }
+    }
+
+    await cardModel.pushItem(cardId, itemToPush)
+
     return newComment
+  } catch (error) {
+    throw error
+  }
+}
+
+const getAllNotifications = async (id) => {
+  try {
+    const cards = await cardModel.getAllNotifications(id)
+
+    const reversedCards = cards.map((card) => ({
+      ...card,
+      notifications: card?.notifications?.reverse()
+    }))
+
+    return reversedCards
   } catch (error) {
     throw error
   }
@@ -416,5 +470,6 @@ export const cardService = {
   unsetDates,
   createChecklist,
   updateCheckList,
-  createComment
+  createComment,
+  getAllNotifications
 }

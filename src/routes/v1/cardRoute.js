@@ -20,6 +20,8 @@ Router.route('/:id')
     cardController.deleteCard
   )
 
+Router.route('/:id/notifications').get(cardController.getAllNotifications)
+
 Router.route('/:id/cover')
   .post(verifyTokenAndUserAuthorizationToCard, upload.single('file'), cardController.updateCover)
   .delete(

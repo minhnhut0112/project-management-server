@@ -8,11 +8,14 @@ const Router = express.Router()
 Router.route('/').post(boardValodation.createNew, boardController.createNew)
 
 Router.route('/getAll/:id').get(boardController.getAll)
+Router.route('/getAllClose/:id').get(boardController.getAllClose)
 
 Router.route('/:id')
   .get(boardController.getDetails)
   .put(boardValodation.updateBoard, boardController.updateColumnOrderIds)
   .delete(boardController.deleteBoard)
+
+Router.route('/:id/archive').get(boardController.getArchiveCardAndList)
 
 Router.route('/:id/labels')
   .put(boardController.editLabel)

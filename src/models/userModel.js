@@ -57,8 +57,17 @@ const findOneById = async (id) => {
     return await GET_DB()
       .collection(USER_COLLECTION_NAME)
       .findOne({
-        _id: new ObjectId(id)
+        _id: new ObjectId(id),
+        _destroy: false
       })
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const getAllUsers = async () => {
+  try {
+    return await GET_DB().collection(USER_COLLECTION_NAME).find().toArray()
   } catch (error) {
     throw new Error(error)
   }
@@ -133,6 +142,25 @@ const pullItem = async (id, data) => {
   }
 }
 
+const updateUser = async (id, data) => {
+  try {
+    const result = await GET_DB()
+      .collection(USER_COLLECTION_NAME)
+      .findOneAndUpdate(
+        {
+          _id: new ObjectId(id)
+        },
+        {
+          $set: data
+        },
+        { returnDocument: 'after' }
+      )
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 export const usernModel = {
   USER_COLLECTION_NAME,
   USER_COLLECTION_SCHEMA,
@@ -143,5 +171,7 @@ export const usernModel = {
   findUser,
   findMember,
   pushItem,
-  pullItem
+  pullItem,
+  getAllUsers,
+  updateUser
 }

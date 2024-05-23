@@ -85,6 +85,15 @@ const getUser = async (req, res, next) => {
   }
 }
 
+const getAllUser = async (req, res, next) => {
+  try {
+    const users = await userService.getAllUser()
+    res.status(StatusCodes.OK).json(users)
+  } catch (error) {
+    next(error)
+  }
+}
+
 const findUSer = async (req, res, next) => {
   try {
     const { email } = req.body
@@ -95,6 +104,28 @@ const findUSer = async (req, res, next) => {
 
     const results = await userService.findUSer(email)
     res.json(results)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const updateUser = async (req, res, next) => {
+  try {
+    const result = await userService.updateUser(req.params.id, req.body)
+
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const updateAvatar = async (req, res, next) => {
+  try {
+    const uploadAvatar = await userService.updateAvatar(req.params.id, req.file)
+
+    global.io.emit('updatecover')
+
+    res.status(StatusCodes.OK).json(uploadAvatar)
   } catch (error) {
     next(error)
   }
@@ -160,5 +191,8 @@ export const userController = {
   removeStarredBoard,
   getStarredBoard,
   updateRecentBoard,
-  getRecentBoard
+  getRecentBoard,
+  getAllUser,
+  updateUser,
+  updateAvatar
 }

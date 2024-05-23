@@ -53,6 +53,25 @@ const findOneById = async (id) => {
   }
 }
 
+const getDestroyedCardsInBoard = async (boardId) => {
+  try {
+    const destroyedCards = await GET_DB()
+      .collection(CARD_COLLECTION_NAME)
+      .aggregate([
+        {
+          $match: {
+            boardId: new ObjectId(boardId),
+            _destroy: true
+          }
+        }
+      ])
+      .toArray()
+    return destroyedCards
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 const updateCard = async (id, data) => {
   try {
     Object.keys(data).forEach((fieldName) => {
@@ -88,6 +107,25 @@ const updateCard = async (id, data) => {
         },
         { returnDocument: 'after' }
       )
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const getAllNotifications = async (userId) => {
+  try {
+    const cursor = await GET_DB()
+      .collection(CARD_COLLECTION_NAME)
+      .find({
+        $and: [
+          {
+            members: { $elemMatch: { _id: new ObjectId(userId) } }
+          },
+          { _destroy: false }
+        ]
+      })
+    const result = await cursor.toArray()
     return result
   } catch (error) {
     throw new Error(error)
@@ -283,5 +321,7 @@ export const cardModel = {
   updateLabel,
   findCardByBoardId,
   deleteManyLabel,
-  archiveAllCard
+  archiveAllCard,
+  getDestroyedCardsInBoard,
+  getAllNotifications
 }

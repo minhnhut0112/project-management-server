@@ -81,6 +81,15 @@ const getUser = async (userId) => {
   }
 }
 
+const getAllUser = async () => {
+  try {
+    const users = await usernModel.getAllUsers()
+    return users
+  } catch (error) {
+    throw error
+  }
+}
+
 const findUSer = async (email) => {
   try {
     const users = await usernModel.findUser(email)
@@ -171,6 +180,30 @@ const getRecentBoard = async (id) => {
   }
 }
 
+const updateUser = async (id, data) => {
+  try {
+    const result = await usernModel.updateUser(id, data)
+
+    return result
+  } catch (error) {
+    throw error
+  }
+}
+
+const updateAvatar = async (id, data) => {
+  try {
+    const updateData = {
+      avatar: `http://localhost:8017/uploads/${data.filename}`
+    }
+
+    const updatedUser = await usernModel.updateUser(id, updateData)
+
+    return updatedUser
+  } catch (error) {
+    throw error
+  }
+}
+
 export const userService = {
   authenticateUser,
   getUser,
@@ -180,5 +213,8 @@ export const userService = {
   removeStarredBoard,
   getStarredBoard,
   updateRecentBoard,
-  getRecentBoard
+  getRecentBoard,
+  getAllUser,
+  updateUser,
+  updateAvatar
 }

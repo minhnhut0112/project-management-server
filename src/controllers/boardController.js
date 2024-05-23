@@ -21,9 +21,29 @@ const getAll = async (req, res, next) => {
   }
 }
 
+const getAllClose = async (req, res, next) => {
+  try {
+    const boards = await boardService.getAllClose(req.params.id)
+
+    res.status(StatusCodes.OK).json(boards)
+  } catch (error) {
+    next(error)
+  }
+}
+
 const getDetails = async (req, res, next) => {
   try {
     const board = await boardService.getDetails(req.params.id)
+
+    res.status(StatusCodes.OK).json(board)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const getArchiveCardAndList = async (req, res, next) => {
+  try {
+    const board = await boardService.getArchiveCardAndList(req.params.id)
 
     res.status(StatusCodes.OK).json(board)
   } catch (error) {
@@ -149,6 +169,8 @@ const confirmInviteEmail = async (req, res, next) => {
   try {
     const result = await boardService.confirmInviteEmail(req.params.id)
 
+    global.io.emit('confirmInviteEmail')
+
     res.status(StatusCodes.OK).json(result)
   } catch (error) {
     next(error)
@@ -179,7 +201,7 @@ const uploadCover = async (req, res, next) => {
 
 const deleteBoard = async (req, res, next) => {
   try {
-    const result = await boardService.deleteBoard(req.params.id, req.user)
+    const result = await boardService.deleteBoard(req.params.id)
 
     // global.io.emit('deletedCard')
 
@@ -244,5 +266,7 @@ export const boardController = {
   deleteBoard,
   createNewIssue,
   updateIssue,
-  editIssue
+  editIssue,
+  getArchiveCardAndList,
+  getAllClose
 }
